@@ -253,10 +253,26 @@
       width: 100%;
     }
 
-    .speed-row {
+    .setting-row {
       display: grid;
       gap: 8px;
       color: var(--muted);
+    }
+
+    select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: var(--paper-strong);
+      outline: none;
+    }
+
+    select:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
     }
 
     input[type="range"] {
@@ -384,7 +400,14 @@
             <button class="stop" type="button" id="stop">Stop</button>
           </div>
 
-          <label class="speed-row" for="speed">
+          <label class="setting-row" for="voice">
+            Voice
+            <select id="voice">
+              <option value="">Loading voices...</option>
+            </select>
+          </label>
+
+          <label class="setting-row" for="speed">
             Speech speed <strong id="speed-label">0.95x</strong>
             <input id="speed" type="range" min="0.65" max="1.35" value="0.95" step="0.05" />
           </label>
@@ -400,10 +423,13 @@
   <script src="./soft-skills-data.js"></script>
   <script>
     const questions = window.softSkillsQuestions || [];
+    const voiceStorageKey = "softSkillsLoopVoice";
     const state = {
       index: 0,
       segment: 0,
       speed: 0.95,
+      voices: [],
+      selectedVoiceURI: localStorage.getItem(voiceStorageKey) || "",
       playing: false,
       paused: false,
       token: 0
@@ -420,6 +446,7 @@
       previous: document.getElementById("previous"),
       next: document.getElementById("next"),
       stop: document.getElementById("stop"),
+      voice: document.getElementById("voice"),
       speed: document.getElementById("speed"),
       speedLabel: document.getElementById("speed-label"),
       status: document.getElementById("status"),
@@ -437,6 +464,56 @@
 
     function supportsSpeech() {
       return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    }
+
+    function voiceLabel(voice) {
+      const locality = voice.localService ? "local" : "remote";
+      return `${voice.name} (${voice.lang}, ${locality})`;
+    }
+
+    function findVoice(uri) {
+      return state.voices.find((voice) => voice.voiceURI === uri) || null;
+    }
+
+    function bestEnglishVoice() {
+      const preferredNames = ["samantha", "alex", "google us english", "microsoft", "natural", "enhanced", "premium"];
+      const english = state.voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+      const preferred = english.find((voice) => {
+        const name = voice.name.toLowerCase();
+        return voice.lang.toLowerCase().startsWith("en-us") && preferredNames.some((term) => name.includes(term));
+      });
+      return preferred
+        || state.voices.find((voice) => voice.lang.toLowerCase().startsWith("en-us"))
+        || state.voices.find((voice) => voice.lang.toLowerCase().startsWith("en-gb"))
+        || english[0]
+        || null;
+    }
+
+    function selectedVoice() {
+      return findVoice(state.selectedVoiceURI);
+    }
+
+    function loadVoices() {
+      if (!supportsSpeech()) return;
+      state.voices = window.speechSynthesis.getVoices();
+
+      if (!state.voices.length) {
+        el.voice.innerHTML = '<option value="">Loading voices...</option>';
+        el.voice.disabled = true;
+        return;
+      }
+
+      const savedVoice = findVoice(state.selectedVoiceURI);
+      const fallbackVoice = bestEnglishVoice();
+      const activeVoice = savedVoice || fallbackVoice;
+      state.selectedVoiceURI = activeVoice ? activeVoice.voiceURI : "";
+      if (activeVoice) localStorage.setItem(voiceStorageKey, activeVoice.voiceURI);
+
+      el.voice.disabled = false;
+      el.voice.innerHTML = state.voices.map((voice) => `
+        <option value="${escapeHtml(voice.voiceURI)}">${escapeHtml(voiceLabel(voice))}</option>
+      `).join("");
+      el.voice.value = state.selectedVoiceURI;
     }
 
     function current() {
@@ -472,6 +549,7 @@
       `).join("");
       el.speed.value = state.speed;
       el.speedLabel.textContent = `${state.speed.toFixed(2)}x`;
+      el.voice.value = state.selectedVoiceURI;
       el.pause.textContent = state.paused ? "Resume" : "Pause";
       renderList();
     }
@@ -497,13 +575,16 @@
       const text = queue[state.segment];
       const token = state.token;
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
+      const voice = selectedVoice();
+      if (voice) utterance.voice = voice;
+      utterance.lang = voice?.lang || "en-US";
       utterance.rate = state.speed;
       utterance.pitch = 1;
 
       utterance.onstart = () => {
         const label = state.segment === 0 ? "question" : `answer part ${state.segment}`;
-        setStatus(`Reading ${label} at ${state.speed.toFixed(2)}x.`);
+        const voiceName = voice ? ` with ${voice.name}` : "";
+        setStatus(`Reading ${label}${voiceName} at ${state.speed.toFixed(2)}x.`);
         render();
       };
 
@@ -588,11 +669,25 @@
       }
     }
 
+    function setVoice(uri) {
+      state.selectedVoiceURI = uri;
+      if (uri) localStorage.setItem(voiceStorageKey, uri);
+      render();
+      if (state.playing && !state.paused) {
+        cancelSpeech();
+        speakCurrentSegment();
+      } else {
+        const voice = selectedVoice();
+        setStatus(voice ? `Selected voice: ${voice.name}.` : "Using browser default voice.");
+      }
+    }
+
     el.start.addEventListener("click", startLoop);
     el.pause.addEventListener("click", togglePause);
     el.stop.addEventListener("click", stopLoop);
     el.previous.addEventListener("click", () => selectIndex(state.index - 1));
     el.next.addEventListener("click", () => selectIndex(state.index + 1));
+    el.voice.addEventListener("change", (event) => setVoice(event.target.value));
     el.speed.addEventListener("input", (event) => setSpeed(event.target.value));
     el.list.addEventListener("click", (event) => {
       const button = event.target.closest("[data-index]");
@@ -604,6 +699,19 @@
 
     if (!supportsSpeech()) {
       setStatus("This browser does not support text-to-speech. Try Chrome, Edge, or Safari.", true);
+      el.voice.innerHTML = '<option value="">No voice support</option>';
+      el.voice.disabled = true;
+    } else {
+      loadVoices();
+      window.speechSynthesis.addEventListener("voiceschanged", () => {
+        const previousVoice = state.selectedVoiceURI;
+        loadVoices();
+        if (!previousVoice && state.selectedVoiceURI) {
+          const voice = selectedVoice();
+          setStatus(voice ? `Auto-selected voice: ${voice.name}.` : "Ready. Tap Start to allow browser speech playback.");
+        }
+        render();
+      });
     }
 
     render();
