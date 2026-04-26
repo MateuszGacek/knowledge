@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soft Skills Interview Trainer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f7ed;
+      --muted: #aab8ad;
+      --page: #0d1110;
+      --paper: #171d19;
+      --paper-strong: #20271f;
+      --side: #080c0a;
+      --line: rgba(218, 229, 216, 0.16);
+      --green: #35c9a6;
+      --green-soft: rgba(53, 201, 166, 0.16);
+      --coral: #ff795f;
+      --coral-soft: rgba(255, 121, 95, 0.16);
+      --yellow: #f4c95d;
+      --yellow-soft: rgba(244, 201, 93, 0.17);
+      --blue: #65b9d6;
+      --blue-soft: rgba(101, 185, 214, 0.16);
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.42);
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(244, 201, 93, 0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(53, 201, 166, 0.055) 1px, transparent 1px),
+        radial-gradient(circle at 18% 8%, rgba(255, 121, 95, 0.08), transparent 28rem),
+        var(--page);
+      background-size: 38px 38px;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    .button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--ink);
+      background: var(--paper-strong);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    button:hover,
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: var(--green);
+      background: #263029;
+    }
+
+    button.active,
+    .button-primary {
+      border-color: var(--green);
+      color: #06110d;
+      background: var(--green);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 22px;
+      color: #eaf3ed;
+      background: var(--side);
+    }
+
+    .brand {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .brand a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .search {
+      width: 100%;
+      min-height: 42px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.06);
+      outline: none;
+    }
+
+    .question-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .question-nav button {
+      width: 100%;
+      min-height: auto;
+      padding: 10px;
+      color: #dce7df;
+      text-align: left;
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .question-nav button.active {
+      color: #17150a;
+      border-color: var(--yellow);
+      background: var(--yellow);
+    }
+
+    .content {
+      min-width: 0;
+      padding: 28px clamp(18px, 4vw, 58px) 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      flex-wrap: wrap;
+    }
+
+    .meter {
+      width: 140px;
+      height: 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #111712;
+      overflow: hidden;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      transition: width 180ms ease;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(23, 29, 25, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .study-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .question-card {
+      padding: clamp(20px, 4vw, 36px);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: clamp(1.7rem, 4vw, 3rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 1.15rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .answer {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .answer p {
+      margin: 0;
+      max-width: 78ch;
+      color: #d7e1d9;
+      font-size: 1.04rem;
+    }
+
+    .controls,
+    .compact-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-panel {
+      padding: 18px;
+    }
+
+    .mini-panel p {
+      margin: 0;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--ink);
+      background: var(--green-soft);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .chip.coral { background: var(--coral-soft); }
+    .chip.blue { background: var(--blue-soft); }
+
+    .flashcard {
+      min-height: 440px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      perspective: 1200px;
+    }
+
+    .flash-inner {
+      width: min(820px, 100%);
+      min-height: 320px;
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(22px, 5vw, 44px);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(244, 201, 93, 0.18), rgba(53, 201, 166, 0.14)),
+        var(--paper-strong);
+    }
+
+    .flash-inner p {
+      margin: 0;
+      color: #d7e1d9;
+      font-size: 1.12rem;
+    }
+
+    .practice-grid,
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .practice-card,
+    .game-card {
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--ink);
+      background: #101511;
+      outline: none;
+      line-height: 1.55;
+    }
+
+    input[type="range"] {
+      width: min(360px, 100%);
+      accent-color: var(--green);
+    }
+
+    .voice-controls {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .range-row,
+    .voice-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .voice-status {
+      min-height: 28px;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .timer {
+      display: grid;
+      place-items: center;
+      width: 148px;
+      aspect-ratio: 1;
+      margin: 18px auto;
+      border: 10px solid var(--green-soft);
+      border-top-color: var(--green);
+      border-radius: 999px;
+      color: var(--ink);
+      font-size: 2.3rem;
+      font-weight: 850;
+    }
+
+    .tap-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tap-grid button {
+      aspect-ratio: 1;
+      min-height: auto;
+      padding: 0;
+      border-width: 2px;
+      background: #101511;
+    }
+
+    .tap-grid button.target {
+      border-color: var(--coral);
+      background: var(--coral-soft);
+    }
+
+    .match-area {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-question,
+    .match-answer {
+      width: 100%;
+      text-align: left;
+      background: #101511;
+    }
+
+    .match-question.selected,
+    .match-answer.selected {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .breath-orb {
+      width: 168px;
+      aspect-ratio: 1;
+      margin: 20px auto 14px;
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, var(--green), var(--blue));
+      transform: scale(0.78);
+      transition: transform 4s ease-in-out;
+    }
+
+    .breath-orb.expand { transform: scale(1); }
+
+    .breath-label {
+      min-height: 34px;
+      color: var(--ink);
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 850;
+    }
+
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.75em;
+      min-height: 1.65em;
+      margin-left: 8px;
+      border: 1px solid rgba(244, 247, 237, 0.22);
+      border-bottom-color: rgba(244, 247, 237, 0.38);
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: var(--yellow);
+      background: rgba(0, 0, 0, 0.24);
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .button-primary .key,
+    button.active .key {
+      border-color: rgba(0, 0, 0, 0.22);
+      color: #17150a;
+      background: rgba(255, 255, 255, 0.38);
+    }
+
+    .shortcut-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1050px) {
+      .app { grid-template-columns: 1fr; }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+
+      .question-nav {
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      }
+
+      .study-layout,
+      .practice-grid,
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .content { padding: 18px 14px 38px; }
+      .sidebar { padding: 18px 14px; }
+      .topbar { align-items: stretch; }
+      .tabs,
+      .tabs button,
+      .button {
+        width: 100%;
+      }
+      .status { width: 100%; }
+      .meter { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <a href="./frontend-interview-course.html">Back to technical course</a>
+        <h1>Soft Skills Interview Trainer</h1>
+        <p>Study the script, rehearse out loud, mark tough questions, and reset your brain with tiny games between rounds.</p>
+      </div>
+      <input class="search" id="search" type="search" placeholder="Search questions... press /" />
+      <nav class="question-nav" id="question-nav" aria-label="Soft skills questions"></nav>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div class="tabs" role="tablist" aria-label="Learning modes">
+          <button class="active" type="button" data-mode="study">Study <span class="key">1</span></button>
+          <button type="button" data-mode="flashcards">Flashcards <span class="key">2</span></button>
+          <button type="button" data-mode="practice">Speak <span class="key">3</span></button>
+          <button type="button" data-mode="relax">Relax <span class="key">4</span></button>
+        </div>
+        <div class="status">
+          <span id="progress-text">0 / 25 remembered</span>
+          <span class="meter" aria-hidden="true"><span id="progress-bar"></span></span>
+        </div>
+      </div>
+      <div class="shortcut-strip" aria-label="Keyboard navigation help">
+        <span><span class="key">/</span> search</span>
+        <span><span class="key">←</span><span class="key">→</span> previous/next</span>
+        <span><span class="key">M</span> remembered</span>
+        <span><span class="key">T</span> tough</span>
+        <span><span class="key">?</span> random</span>
+        <span><span class="key">L</span>/<span class="key">O</span> read/stop</span>
+        <span><span class="key">I</span>/<span class="key">U</span> mic/stop</span>
+      </div>
+
+      <section id="study-view" class="view study-layout">
+        <article class="panel question-card">
+          <div class="kicker" id="study-kicker">Question 1</div>
+          <h2 id="study-question"></h2>
+          <div class="answer" id="study-answer"></div>
+          <div class="voice-controls">
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="read-answer">Read answer <span class="key">L</span></button>
+              <button type="button" id="stop-reading">Stop reading <span class="key">O</span></button>
+            </div>
+            <label class="range-row" for="speech-rate">
+              Spoken tempo
+              <input id="speech-rate" type="range" min="0.65" max="1.35" value="0.95" step="0.05" />
+              <span id="speech-rate-label">0.95x</span>
+              <span><span class="key">Alt ↑</span><span class="key">Alt ↓</span></span>
+            </label>
+            <div class="voice-status" id="reader-status">Ready to read this answer aloud.</div>
+          </div>
+          <div class="controls">
+            <button type="button" id="prev-question">Previous <span class="key">←</span></button>
+            <button class="button-primary" type="button" id="next-question">Next question <span class="key">→</span></button>
+            <button type="button" id="toggle-remembered">Mark remembered <span class="key">M</span></button>
+            <button type="button" id="toggle-tough">Mark tough <span class="key">T</span></button>
+          </div>
+        </article>
+
+        <aside class="side-panel">
+          <section class="panel mini-panel">
+            <h3>Speaking anchors</h3>
+            <p id="anchor-text"></p>
+            <div class="chips" id="anchor-chips"></div>
+          </section>
+          <section class="panel mini-panel">
+            <h3>Fast review queue</h3>
+            <p id="queue-text"></p>
+            <div class="compact-controls">
+              <button type="button" id="random-question">Random question <span class="key">?</span></button>
+              <button type="button" id="tough-question">Practice tough <span class="key">G</span></button>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section id="flashcards-view" class="view hidden">
+        <article class="panel flashcard">
+          <div class="flash-inner">
+            <div class="kicker" id="flash-kicker">Flashcard</div>
+            <h2 id="flash-question"></h2>
+            <div id="flash-answer" class="answer hidden"></div>
+            <div class="controls">
+              <button class="button-primary" type="button" id="reveal-card">Reveal answer <span class="key">Space</span></button>
+              <button type="button" id="shuffle-card">Shuffle <span class="key">X</span></button>
+              <button type="button" id="flash-remembered">I know this <span class="key">K</span></button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section id="practice-view" class="view hidden">
+        <div class="practice-grid">
+          <article class="panel practice-card">
+            <h3>60-second answer drill</h3>
+            <p id="practice-question"></p>
+            <div class="timer" id="timer">60</div>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="start-timer">Start <span class="key">S</span></button>
+              <button type="button" id="reset-timer">Reset <span class="key">R</span></button>
+              <button type="button" id="new-practice">New prompt <span class="key">N</span></button>
+            </div>
+          </article>
+          <article class="panel practice-card">
+            <h3>Polish your spoken version</h3>
+            <p>Write a shorter version in your own words, then say it without reading.</p>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="start-mic">Use mic <span class="key">I</span></button>
+              <button type="button" id="stop-mic">Stop mic <span class="key">U</span></button>
+            </div>
+            <div class="voice-status" id="mic-status">Mic transcript will appear in the note field.</div>
+            <textarea id="notes" placeholder="My natural version..."></textarea>
+            <div class="compact-controls">
+              <button type="button" id="save-note">Save note <span class="key">Ctrl S</span></button>
+              <button type="button" id="clear-note">Clear <span class="key">Ctrl Del</span></button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="relax-view" class="view hidden">
+        <div class="games-grid">
+          <article class="panel game-card">
+            <h3>Calm taps</h3>
+            <p>Click the highlighted tile. It changes fast enough to wake you up, but slow enough to stay calm.</p>
+            <div class="tap-grid" id="tap-grid"></div>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="start-taps">Start taps <span class="key">A</span></button>
+              <button type="button" id="stop-taps">Stop <span class="key">Z</span></button>
+              <span class="chip" id="tap-score">Score 0</span>
+            </div>
+          </article>
+
+          <article class="panel game-card">
+            <h3>Question match</h3>
+            <p>Match a question with its theme. It is light review, not a test.</p>
+            <div class="match-area">
+              <div id="match-questions"></div>
+              <div id="match-answers"></div>
+            </div>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="new-match">New match set <span class="key">D</span></button>
+              <span class="chip blue" id="match-status">Ready</span>
+            </div>
+          </article>
+
+          <article class="panel game-card">
+            <h3>Box breathing</h3>
+            <p>Use this before mock interview rounds when your voice gets tense.</p>
+            <div class="breath-orb" id="breath-orb"></div>
+            <div class="breath-label" id="breath-label">Ready</div>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="start-breath">Start breathing <span class="key">B</span></button>
+              <button type="button" id="stop-breath">Stop <span class="key">V</span></button>
+            </div>
+          </article>
+
+          <article class="panel game-card">
+            <h3>Recovery prompt</h3>
+            <p id="recovery-prompt"></p>
+            <div class="compact-controls">
+              <button class="button-primary" type="button" id="new-recovery">Give me another <span class="key">P</span></button>
+              <button type="button" id="back-to-study">Back to current question <span class="key">H</span></button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        theme: "Accomplishments",
+        q: "What have been your greatest accomplishments?",
+        anchors: ["npm package", "Vite + React + TypeScript", "library maintainer mindset"],
+        a: [
+          "One of my greatest accomplishments was building my own npm package from scratch using Vite, React, and TypeScript.",
+          "It helped me understand how libraries work internally, including bundling, architecture, and reusable component design.",
+          "This project also improved my ability to create scalable solutions and think more like a library maintainer, not only an application developer."
+        ]
+      },
+      {
+        theme: "Company motivation",
+        q: "What do you like about our company and the work we do here?",
+        anchors: ["modern technologies", "knowledge sharing", "developer community"],
+        a: [
+          "I like that your company focuses on modern technologies, high-quality engineering, and complex technical challenges.",
+          "I also really value the culture of knowledge sharing and collaboration. For me, it is important to work in an environment where people support each other and are open to helping when someone has a blocker.",
+          "What I especially like is that your company creates tools that are useful not only for clients, but also for the wider developer community."
+        ]
+      },
+      {
+        theme: "Career path",
+        q: "Why did you choose this career path?",
+        anchors: ["technology", "problem-solving", "production codebases"],
+        a: [
+          "I chose this career path because I have always been interested in technology and problem-solving.",
+          "At university, I explored different areas like graphics, networking, administration, and programming. Over time, I realized that software development was the area where I felt the most comfortable and effective.",
+          "I do not regret this decision. If I had another chance, I would probably focus even earlier on practical experience, real projects, and working with production codebases."
+        ]
+      },
+      {
+        theme: "Communication",
+        q: "How would you explain a complex issue to a colleague?",
+        anchors: ["context", "visual explanation", "step by step"],
+        a: [
+          "I would start by explaining the context in a simple way and showing the issue visually if possible.",
+          "Then I would break it down into smaller parts and explain step by step what is happening, where the issue comes from, and what possible solutions we have.",
+          "I also like to involve the other person in the discussion, because it helps both sides understand the topic better and often leads to a stronger solution."
+        ]
+      },
+      {
+        theme: "Passion",
+        q: "What are you passionate about?",
+        anchors: ["technology", "strength training", "handstand"],
+        a: [
+          "I am passionate about technology, continuous learning, and improving my skills as a developer.",
+          "Outside of work, I am really into strength training, especially compound lifts like squat, bench press, and deadlift. Training with heavy weights helps me release stress, reset after a workday, and stay disciplined.",
+          "Recently, I have also started getting into bodyweight training, and I am currently learning how to do a handstand."
+        ]
+      },
+      {
+        theme: "Proactivity",
+        q: "Describe a time you identified and solved a problem before it became urgent.",
+        anchors: ["react early", "small fixes", "team discussion"],
+        a: [
+          "In my projects, I try to react early when I notice something that could become a bigger issue later.",
+          "For example, if I see a small inconsistency in the frontend or integration with the backend, I first check if I can solve it quickly. If it is a small improvement, I usually fix it immediately.",
+          "For bigger topics, I discuss them with the team or leader early, so we can decide priorities and avoid delays later."
+        ]
+      },
+      {
+        theme: "Project reflection",
+        q: "Can you tell me one thing you would change about your last project?",
+        anchors: ["design changes", "agent instructions", "Figma MCP"],
+        a: [
+          "One thing I would improve is how we handle frequent design changes.",
+          "In my last project, we had many UI updates, which often required reworking components and adjusting existing views. To improve this process, I introduced structured instructions for agents and integrated Figma MCP into the project.",
+          "This helped us standardize the workflow and save time when creating new features or redesigning existing ones. Going forward, I would focus even more on flexible components and better planning to reduce rework."
+        ]
+      },
+      {
+        theme: "Success",
+        q: "What is your definition of success?",
+        anchors: ["adapt quickly", "apply knowledge", "team impact"],
+        a: [
+          "For me, success means being able to adapt quickly to new challenges and technologies.",
+          "It is about staying open to learning, improving my skills, and applying new knowledge in real projects. If I can take something new, understand it efficiently, and use it to deliver value, I consider that a success.",
+          "Success also means contributing to the team and seeing a positive impact from my work."
+        ]
+      },
+      {
+        theme: "Motivation",
+        q: "Name the least rewarding part of your most recent role or project.",
+        anchors: ["static views", "real functionality", "every part matters"],
+        a: [
+          "The least rewarding part is working on static views without real data or business logic.",
+          "I find it less engaging because it does not involve much problem-solving or technical decision-making. I prefer tasks where I can work on real functionality, connect different parts of the application, and deliver meaningful value.",
+          "That said, I understand that every part of the project is important, even the less exciting ones."
+        ]
+      },
+      {
+        theme: "Decision defense",
+        q: "Have you ever had a supervisor question one of your decisions?",
+        anchors: ["URL parameters", "qs to nuqs", "show implementation"],
+        a: [
+          "Yes, for example when I proposed improving how we handle URL parameters in one project.",
+          "We were using a basic query string library, but it had limitations when it came to state management and syncing data with the UI. I suggested switching from qs to nuqs, because it provided better support for URL state and reduced the amount of custom logic.",
+          "My supervisor initially questioned the change, but after discussing the benefits and showing the implementation, we agreed to move forward with it."
+        ]
+      },
+      {
+        theme: "Feedback",
+        q: "What do you do if you receive the same negative feedback twice?",
+        anchors: ["take seriously", "root cause", "simple systems"],
+        a: [
+          "If I receive the same negative feedback twice, I take it seriously.",
+          "First, I analyze the root cause and try to understand why the same situation happened again. Then I create a clear plan to improve and introduce simple systems, like notes, checklists, or reminders.",
+          "My goal is to make sure the same feedback does not come up a third time."
+        ]
+      },
+      {
+        theme: "Quality and speed",
+        q: "Is it more important to complete tasks well or quickly?",
+        anchors: ["balance", "core functionality", "stable first"],
+        a: [
+          "I believe it is important to balance quality and speed, depending on the situation and the deadline.",
+          "When time is limited, I break the task into smaller parts and prioritize the core functionality first. I focus on delivering the most important features with good quality.",
+          "If needed, additional improvements can be planned later, once the main functionality is stable and delivered."
+        ]
+      },
+      {
+        theme: "Conflict",
+        q: "Provide some of your methods for handling conflict.",
+        anchors: ["respectful communication", "understand perspectives", "compromise"],
+        a: [
+          "I focus on open, respectful, and constructive communication.",
+          "First, I try to understand all perspectives before forming a conclusion. If needed, I suggest a short meeting to clarify the situation and avoid misunderstandings.",
+          "Then I try to find a solution or compromise that works for everyone and helps the team move forward."
+        ]
+      },
+      {
+        theme: "Teamwork",
+        q: "Do you prefer to work independently or in a team?",
+        anchors: ["team collaboration", "knowledge sharing", "autonomy"],
+        a: [
+          "I prefer working in a team because collaboration and knowledge sharing usually lead to better solutions.",
+          "I like being able to discuss ideas, ask questions, and help others when needed. At the same time, I am also comfortable working independently and taking full ownership of my tasks.",
+          "For me, the best environment is a balance between teamwork and autonomy."
+        ]
+      },
+      {
+        theme: "Ownership",
+        q: "Do you prefer self-directed work or clearly defined tasks?",
+        anchors: ["initiative", "ownership", "alignment"],
+        a: [
+          "I prefer self-directed work because it gives me flexibility and allows me to take initiative.",
+          "I enjoy situations where I can analyze the problem, propose a solution, and take ownership of implementation. However, I also value clearly defined tasks, especially when priorities, deadlines, or team alignment are critical.",
+          "For me, both approaches can work well depending on the context."
+        ]
+      },
+      {
+        theme: "Management style",
+        q: "What type of manager would you never want to work for?",
+        anchors: ["trust", "clear communication", "autonomy"],
+        a: [
+          "I prefer managers who trust their team, communicate clearly, and support autonomy.",
+          "That kind of environment helps me stay productive, take ownership of my work, and grow as a developer. I find it less effective to work in environments with heavy micromanagement or a lack of transparency.",
+          "For me, trust and clear communication are very important."
+        ]
+      },
+      {
+        theme: "Fast pace",
+        q: "How do you deal with completing fast-paced work duties?",
+        anchors: ["prioritize", "quick wins", "structured way"],
+        a: [
+          "I break tasks into smaller parts and prioritize them based on impact, urgency, and deadlines.",
+          "I often start with quick wins to build momentum and keep progress visible. Then I move to more complex parts in a structured way.",
+          "This helps me stay organized, focused, and productive in fast-paced environments."
+        ]
+      },
+      {
+        theme: "Industry learning",
+        q: "Which methods do you use to learn about new trends in the industry?",
+        anchors: ["GitHub", "official docs", "developer community"],
+        a: [
+          "I follow GitHub, official documentation, and tech blogs to stay up to date with new trends.",
+          "I also learn by building small projects and testing new tools in practice. Additionally, I attend meetups and take part in a local developer community where we share knowledge, ideas, and interesting technical updates.",
+          "At work, we also use internal channels for knowledge sharing, which helps the whole team stay updated."
+        ]
+      },
+      {
+        theme: "Skill acquisition",
+        q: "How did you acquire your skills and knowledge?",
+        anchors: ["hands-on experience", "real projects", "AI agents"],
+        a: [
+          "I developed my skills through hands-on experience, self-study, and collaboration with other developers.",
+          "Real projects helped me the most because they taught me how to solve practical problems, work with production code, and communicate with the team. Recently, I have also started using AI agents to improve my learning process.",
+          "I use them to analyze documentation, extract useful information, and create structured learning materials with practical examples."
+        ]
+      },
+      {
+        theme: "Improvement",
+        q: "Can you describe a skill you need to improve?",
+        anchors: ["English communication", "speaking fluency", "international environment"],
+        a: [
+          "I am currently improving my English communication, especially speaking fluency.",
+          "I actively practice through conversations, interview simulations, and real-world scenarios. I am already seeing steady progress, but I want to become more confident and natural when speaking.",
+          "My goal is to communicate more effectively in an international environment."
+        ]
+      },
+      {
+        theme: "Upskilling",
+        q: "Are there any methods you prefer for upskilling?",
+        anchors: ["hands-on learning", "structured paths", "personalized content"],
+        a: [
+          "I prefer hands-on learning, especially through building projects and solving real problems.",
+          "I also like creating my own structured learning paths with step-by-step explanations and practical examples. Recently, I have been using AI agents to generate personalized learning content, which helps me understand how things work faster.",
+          "This approach makes learning more effective because I can immediately apply new knowledge in practice."
+        ]
+      },
+      {
+        theme: "Strengths",
+        q: "What are your greatest professional strengths?",
+        anchors: ["adaptability", "problem-solving", "communication"],
+        a: [
+          "My greatest strengths are adaptability, problem-solving, and strong communication, especially in cross-functional teams.",
+          "When I encounter a blocker, I first analyze it independently. I break it down, identify the root cause, compare possible solutions, and try to understand the context.",
+          "If needed, I proactively reach out to the right person to resolve it efficiently. I also learn quickly and focus on building clean, scalable, and maintainable solutions."
+        ]
+      },
+      {
+        theme: "Innovation",
+        q: "How do you innovatively solve challenging situations?",
+        anchors: ["root cause", "impact", "maintainability"],
+        a: [
+          "I approach challenges by breaking them down into smaller, manageable parts and identifying the root cause.",
+          "Then I evaluate possible solutions based on impact, complexity, and long-term maintainability. I also like to discuss the approach with the team to validate the idea before implementation.",
+          "This helps me choose solutions that are not only effective now, but also maintainable in the future."
+        ]
+      },
+      {
+        theme: "Pressure",
+        q: "How do you work under the pressure of tight deadlines?",
+        anchors: ["stay calm", "prioritize", "communicate early"],
+        a: [
+          "I stay calm and focused under pressure by prioritizing tasks and breaking them into manageable steps.",
+          "I concentrate on delivering the most important parts first and keep clear communication with the team to stay aligned. If something cannot be delivered on time, I communicate it early and suggest possible options.",
+          "This helps maintain quality and deliver results even under tight deadlines."
+        ]
+      },
+      {
+        theme: "Workday",
+        q: "Describe your typical day at work.",
+        anchors: ["stand-up", "frontend and backend integration", "code reviews"],
+        a: [
+          "I usually start my day with a stand-up to align on priorities, progress, and possible blockers.",
+          "Then I focus on implementing features, improving existing solutions, and integrating frontend logic with backend APIs. I collaborate closely with backend developers to ensure smooth integration and consistent behavior.",
+          "I also take part in code reviews and use tools like GitHub, Slack, project management tools, and meetings to keep clear communication with the team."
+        ]
+      }
+    ];
+
+    const storageKey = "softSkillsTrainerState";
+    const state = {
+      index: 0,
+      mode: "study",
+      remembered: new Set(),
+      tough: new Set(),
+      notes: {},
+      flashRevealed: false,
+      selectedMatchQuestion: null,
+      selectedMatchAnswer: null,
+      matchPairs: [],
+      tapTarget: -1,
+      tapScore: 0,
+      tapInterval: null,
+      breathInterval: null,
+      timerInterval: null,
+      timerValue: 60,
+      speechRate: 0.95,
+      recognition: null,
+      recognizing: false,
+      micBaseText: ""
+    };
+
+    const el = {
+      nav: document.getElementById("question-nav"),
+      search: document.getElementById("search"),
+      progressText: document.getElementById("progress-text"),
+      progressBar: document.getElementById("progress-bar"),
+      studyKicker: document.getElementById("study-kicker"),
+      studyQuestion: document.getElementById("study-question"),
+      studyAnswer: document.getElementById("study-answer"),
+      speechRate: document.getElementById("speech-rate"),
+      speechRateLabel: document.getElementById("speech-rate-label"),
+      readerStatus: document.getElementById("reader-status"),
+      anchorText: document.getElementById("anchor-text"),
+      anchorChips: document.getElementById("anchor-chips"),
+      queueText: document.getElementById("queue-text"),
+      flashKicker: document.getElementById("flash-kicker"),
+      flashQuestion: document.getElementById("flash-question"),
+      flashAnswer: document.getElementById("flash-answer"),
+      practiceQuestion: document.getElementById("practice-question"),
+      timer: document.getElementById("timer"),
+      notes: document.getElementById("notes"),
+      micStatus: document.getElementById("mic-status"),
+      tapGrid: document.getElementById("tap-grid"),
+      tapScore: document.getElementById("tap-score"),
+      matchQuestions: document.getElementById("match-questions"),
+      matchAnswers: document.getElementById("match-answers"),
+      matchStatus: document.getElementById("match-status"),
+      breathOrb: document.getElementById("breath-orb"),
+      breathLabel: document.getElementById("breath-label"),
+      recoveryPrompt: document.getElementById("recovery-prompt")
+    };
+
+    function save() {
+      const data = {
+        index: state.index,
+        remembered: Array.from(state.remembered),
+        tough: Array.from(state.tough),
+        notes: state.notes
+      };
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function load() {
+      try {
+        const data = JSON.parse(localStorage.getItem(storageKey));
+        if (!data) return;
+        state.index = data.index || 0;
+        state.remembered = new Set(data.remembered || []);
+        state.tough = new Set(data.tough || []);
+        state.notes = data.notes || {};
+      } catch {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function current() {
+      return questions[state.index];
+    }
+
+    function renderAnswer(target, answer) {
+      target.innerHTML = answer.map((paragraph) => `<p>${paragraph}</p>`).join("");
+    }
+
+    function renderNav() {
+      const query = el.search.value.trim().toLowerCase();
+      el.nav.innerHTML = questions
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => !query || item.q.toLowerCase().includes(query) || item.theme.toLowerCase().includes(query))
+        .map(({ item, index }) => `
+          <button type="button" class="${index === state.index ? "active" : ""}" data-question-index="${index}">
+            ${index + 1}. ${item.q}
+          </button>
+        `)
+        .join("");
+    }
+
+    function renderStudy() {
+      const item = current();
+      el.studyKicker.textContent = `Question ${state.index + 1} / ${questions.length} - ${item.theme}`;
+      el.studyQuestion.textContent = item.q;
+      renderAnswer(el.studyAnswer, item.a);
+      el.anchorText.textContent = "Use these as memory hooks when you rehearse without reading.";
+      el.anchorChips.innerHTML = item.anchors.map((anchor, index) => {
+        const tone = index === 1 ? "coral" : index === 2 ? "blue" : "";
+        return `<span class="chip ${tone}">${anchor}</span>`;
+      }).join("");
+      const toughCount = state.tough.size;
+      el.queueText.textContent = toughCount
+        ? `${toughCount} tough question${toughCount === 1 ? "" : "s"} waiting for focused practice.`
+        : "No tough questions marked yet. Mark anything that feels unnatural to say.";
+      document.getElementById("toggle-remembered").innerHTML = `${state.remembered.has(state.index) ? "Remembered" : "Mark remembered"} <span class="key">M</span>`;
+      document.getElementById("toggle-tough").innerHTML = `${state.tough.has(state.index) ? "Tough marked" : "Mark tough"} <span class="key">T</span>`;
+    }
+
+    function renderFlash() {
+      const item = current();
+      el.flashKicker.textContent = `Flashcard ${state.index + 1} - ${item.theme}`;
+      el.flashQuestion.textContent = item.q;
+      renderAnswer(el.flashAnswer, item.a);
+      el.flashAnswer.classList.toggle("hidden", !state.flashRevealed);
+      document.getElementById("reveal-card").innerHTML = `${state.flashRevealed ? "Hide answer" : "Reveal answer"} <span class="key">Space</span>`;
+    }
+
+    function renderPractice() {
+      const item = current();
+      el.practiceQuestion.textContent = item.q;
+      el.notes.value = state.notes[state.index] || "";
+      el.timer.textContent = state.timerValue;
+    }
+
+    function renderProgress() {
+      const remembered = state.remembered.size;
+      const percent = Math.round((remembered / questions.length) * 100);
+      el.progressText.textContent = `${remembered} / ${questions.length} remembered`;
+      el.progressBar.style.width = `${percent}%`;
+    }
+
+    function renderVoiceControls() {
+      el.speechRate.value = String(state.speechRate);
+      el.speechRateLabel.textContent = `${state.speechRate.toFixed(2)}x`;
+    }
+
+    function renderRecoveryPrompt() {
+      const prompts = [
+        "Relax your jaw, roll your shoulders, then answer the current question in one clean sentence.",
+        "Stand up for 20 seconds and say only the first paragraph of the answer.",
+        "Take four slow breaths. Then explain the answer like you are talking to one friendly colleague.",
+        "Say the three anchors out loud, close your eyes, then rebuild the full answer from memory.",
+        "Drop the perfect wording. Keep the meaning. Make it sound like you."
+      ];
+      el.recoveryPrompt.textContent = prompts[Math.floor(Math.random() * prompts.length)];
+    }
+
+    function renderAll() {
+      renderNav();
+      renderStudy();
+      renderFlash();
+      renderPractice();
+      renderProgress();
+      renderVoiceControls();
+    }
+
+    function setIndex(index) {
+      stopReading();
+      if (state.recognizing) stopMic();
+      state.index = (index + questions.length) % questions.length;
+      state.flashRevealed = false;
+      state.timerValue = 60;
+      save();
+      renderAll();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      if (mode !== "study") stopReading();
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.mode === mode);
+      });
+      document.querySelectorAll(".view").forEach((view) => view.classList.add("hidden"));
+      document.getElementById(`${mode}-view`).classList.remove("hidden");
+      if (mode === "relax") {
+        renderRecoveryPrompt();
+        if (!state.matchPairs.length) buildMatchSet();
+      }
+    }
+
+    function isTypingTarget(target) {
+      return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable;
+    }
+
+    function clickById(id) {
+      document.getElementById(id)?.click();
+    }
+
+    function answerText(item = current()) {
+      return `${item.q}. ${item.a.join(" ")}`;
+    }
+
+    function setSpeechRate(value) {
+      state.speechRate = Math.min(1.35, Math.max(0.65, Number(value)));
+      renderVoiceControls();
+    }
+
+    function readCurrentAnswer() {
+      if (!("speechSynthesis" in window)) {
+        el.readerStatus.textContent = "This browser does not support text-to-speech.";
+        return;
+      }
+
+      stopReading();
+      const utterance = new SpeechSynthesisUtterance(answerText());
+      utterance.lang = "en-US";
+      utterance.rate = state.speechRate;
+      utterance.pitch = 1;
+      utterance.onstart = () => {
+        el.readerStatus.textContent = `Reading at ${state.speechRate.toFixed(2)}x.`;
+      };
+      utterance.onend = () => {
+        el.readerStatus.textContent = "Finished reading.";
+      };
+      utterance.onerror = () => {
+        el.readerStatus.textContent = "Reading stopped or blocked by the browser.";
+      };
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopReading() {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (el.readerStatus) el.readerStatus.textContent = "Ready to read this answer aloud.";
+    }
+
+    function startMic() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        el.micStatus.textContent = "Speech recognition is not supported in this browser. Try Chrome or Edge.";
+        return;
+      }
+      if (state.recognizing) return;
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      state.recognition = recognition;
+      state.recognizing = true;
+      state.micBaseText = el.notes.value.trim();
+      el.micStatus.textContent = "Listening. Speak your answer naturally.";
+
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let index = 0; index < event.results.length; index += 1) {
+          transcript += event.results[index][0].transcript;
+        }
+        const separator = state.micBaseText ? "\n\n" : "";
+        el.notes.value = `${state.micBaseText}${separator}${transcript.trim()}`;
+        state.notes[state.index] = el.notes.value;
+        save();
+      };
+
+      recognition.onerror = (event) => {
+        el.micStatus.textContent = `Mic error: ${event.error}.`;
+        state.recognizing = false;
+      };
+
+      recognition.onend = () => {
+        state.recognizing = false;
+        el.micStatus.textContent = "Mic stopped. Transcript is saved in the note field.";
+      };
+
+      recognition.start();
+    }
+
+    function stopMic() {
+      if (state.recognition && state.recognizing) {
+        state.recognition.stop();
+      }
+      state.recognizing = false;
+      el.micStatus.textContent = "Mic stopped. Transcript is saved in the note field.";
+    }
+
+    function handleKeyboard(event) {
+      const key = event.key.toLowerCase();
+      const typing = isTypingTarget(event.target);
+
+      if (event.ctrlKey && key === "s") {
+        event.preventDefault();
+        if (state.mode === "practice") clickById("save-note");
+        return;
+      }
+
+      if (event.ctrlKey && (event.key === "Delete" || event.key === "Backspace")) {
+        if (state.mode === "practice") {
+          event.preventDefault();
+          clickById("clear-note");
+        }
+        return;
+      }
+
+      if (event.altKey && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
+        event.preventDefault();
+        const delta = event.key === "ArrowUp" ? 0.05 : -0.05;
+        setSpeechRate((state.speechRate + delta).toFixed(2));
+        return;
+      }
+
+      if (typing) {
+        if (event.key === "Escape") event.target.blur();
+        return;
+      }
+
+      if (event.key === "/") {
+        event.preventDefault();
+        el.search.focus();
+        el.search.select();
+        return;
+      }
+
+      const modeShortcuts = { "1": "study", "2": "flashcards", "3": "practice", "4": "relax" };
+      if (modeShortcuts[event.key]) {
+        event.preventDefault();
+        setMode(modeShortcuts[event.key]);
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setIndex(state.index - 1);
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setIndex(state.index + 1);
+        return;
+      }
+
+      if (key === "m") {
+        event.preventDefault();
+        clickById("toggle-remembered");
+        return;
+      }
+
+      if (key === "t") {
+        event.preventDefault();
+        clickById("toggle-tough");
+        return;
+      }
+
+      if (event.key === "?") {
+        event.preventDefault();
+        clickById("random-question");
+        return;
+      }
+
+      if (key === "g") {
+        event.preventDefault();
+        clickById("tough-question");
+        return;
+      }
+
+      if (key === "l") {
+        event.preventDefault();
+        clickById("read-answer");
+        return;
+      }
+
+      if (key === "o") {
+        event.preventDefault();
+        clickById("stop-reading");
+        return;
+      }
+
+      if (state.mode === "flashcards") {
+        if (event.key === " ") {
+          event.preventDefault();
+          clickById("reveal-card");
+          return;
+        }
+        if (key === "x") {
+          event.preventDefault();
+          clickById("shuffle-card");
+          return;
+        }
+        if (key === "k") {
+          event.preventDefault();
+          clickById("flash-remembered");
+          return;
+        }
+      }
+
+      if (state.mode === "practice") {
+        if (key === "i") {
+          event.preventDefault();
+          clickById("start-mic");
+          return;
+        }
+        if (key === "u") {
+          event.preventDefault();
+          clickById("stop-mic");
+          return;
+        }
+        if (key === "s") {
+          event.preventDefault();
+          clickById("start-timer");
+          return;
+        }
+        if (key === "r") {
+          event.preventDefault();
+          clickById("reset-timer");
+          return;
+        }
+        if (key === "n") {
+          event.preventDefault();
+          clickById("new-practice");
+          return;
+        }
+      }
+
+      if (state.mode === "relax") {
+        const relaxShortcuts = {
+          a: "start-taps",
+          z: "stop-taps",
+          d: "new-match",
+          b: "start-breath",
+          v: "stop-breath",
+          p: "new-recovery",
+          h: "back-to-study"
+        };
+        if (relaxShortcuts[key]) {
+          event.preventDefault();
+          clickById(relaxShortcuts[key]);
+        }
+      }
+    }
+
+    function randomIndex() {
+      return Math.floor(Math.random() * questions.length);
+    }
+
+    function buildTapGrid() {
+      el.tapGrid.innerHTML = Array.from({ length: 16 }, (_, index) => `
+        <button type="button" aria-label="Calm tap tile ${index + 1}" data-tap-index="${index}"></button>
+      `).join("");
+    }
+
+    function moveTapTarget() {
+      state.tapTarget = Math.floor(Math.random() * 16);
+      el.tapGrid.querySelectorAll("button").forEach((button, index) => {
+        button.classList.toggle("target", index === state.tapTarget);
+      });
+    }
+
+    function startTaps() {
+      stopTaps();
+      state.tapScore = 0;
+      el.tapScore.textContent = "Score 0";
+      moveTapTarget();
+      state.tapInterval = window.setInterval(moveTapTarget, 1100);
+    }
+
+    function stopTaps() {
+      if (state.tapInterval) window.clearInterval(state.tapInterval);
+      state.tapInterval = null;
+      state.tapTarget = -1;
+      el.tapGrid.querySelectorAll("button").forEach((button) => button.classList.remove("target"));
+    }
+
+    function buildMatchSet() {
+      const indexes = [];
+      while (indexes.length < 4) {
+        const index = randomIndex();
+        if (!indexes.includes(index)) indexes.push(index);
+      }
+      state.matchPairs = indexes.map((index) => ({ index, theme: questions[index].theme }));
+      const shuffledAnswers = [...state.matchPairs].sort(() => Math.random() - 0.5);
+      state.selectedMatchQuestion = null;
+      state.selectedMatchAnswer = null;
+      el.matchStatus.textContent = "Ready";
+      el.matchQuestions.innerHTML = state.matchPairs.map((pair) => `
+        <button class="match-question" type="button" data-match-question="${pair.index}">
+          ${pair.index + 1}. ${questions[pair.index].q}
+        </button>
+      `).join("");
+      el.matchAnswers.innerHTML = shuffledAnswers.map((pair) => `
+        <button class="match-answer" type="button" data-match-answer="${pair.index}">
+          ${pair.theme}
+        </button>
+      `).join("");
+    }
+
+    function checkMatch() {
+      if (state.selectedMatchQuestion === null || state.selectedMatchAnswer === null) return;
+      const correct = state.selectedMatchQuestion === state.selectedMatchAnswer;
+      el.matchStatus.textContent = correct ? "Match" : "Try again";
+      if (correct) {
+        setIndex(state.selectedMatchQuestion);
+        state.selectedMatchQuestion = null;
+        state.selectedMatchAnswer = null;
+        window.setTimeout(buildMatchSet, 650);
+      }
+    }
+
+    function startBreathing() {
+      stopBreathing();
+      const phases = [
+        { label: "Inhale", expand: true },
+        { label: "Hold", expand: true },
+        { label: "Exhale", expand: false },
+        { label: "Hold", expand: false }
+      ];
+      let phaseIndex = 0;
+      const applyPhase = () => {
+        const phase = phases[phaseIndex % phases.length];
+        el.breathLabel.textContent = phase.label;
+        el.breathOrb.classList.toggle("expand", phase.expand);
+        phaseIndex += 1;
+      };
+      applyPhase();
+      state.breathInterval = window.setInterval(applyPhase, 4000);
+    }
+
+    function stopBreathing() {
+      if (state.breathInterval) window.clearInterval(state.breathInterval);
+      state.breathInterval = null;
+      el.breathLabel.textContent = "Ready";
+      el.breathOrb.classList.remove("expand");
+    }
+
+    function startTimer() {
+      if (state.timerInterval) return;
+      state.timerInterval = window.setInterval(() => {
+        state.timerValue -= 1;
+        el.timer.textContent = state.timerValue;
+        if (state.timerValue <= 0) {
+          window.clearInterval(state.timerInterval);
+          state.timerInterval = null;
+          el.timer.textContent = "Done";
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      if (state.timerInterval) window.clearInterval(state.timerInterval);
+      state.timerInterval = null;
+      state.timerValue = 60;
+      el.timer.textContent = "60";
+    }
+
+    load();
+    buildTapGrid();
+    buildMatchSet();
+    renderRecoveryPrompt();
+    renderAll();
+
+    el.search.addEventListener("input", renderNav);
+    el.nav.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-question-index]");
+      if (!button) return;
+      setIndex(Number(button.dataset.questionIndex));
+    });
+
+    document.querySelectorAll("[data-mode]").forEach((button) => {
+      button.addEventListener("click", () => setMode(button.dataset.mode));
+    });
+
+    document.getElementById("prev-question").addEventListener("click", () => setIndex(state.index - 1));
+    document.getElementById("next-question").addEventListener("click", () => setIndex(state.index + 1));
+    document.getElementById("random-question").addEventListener("click", () => setIndex(randomIndex()));
+    document.getElementById("tough-question").addEventListener("click", () => {
+      const tough = Array.from(state.tough);
+      setIndex(tough.length ? tough[Math.floor(Math.random() * tough.length)] : randomIndex());
+    });
+
+    document.getElementById("toggle-remembered").addEventListener("click", () => {
+      state.remembered.has(state.index) ? state.remembered.delete(state.index) : state.remembered.add(state.index);
+      save();
+      renderAll();
+    });
+
+    document.getElementById("toggle-tough").addEventListener("click", () => {
+      state.tough.has(state.index) ? state.tough.delete(state.index) : state.tough.add(state.index);
+      save();
+      renderAll();
+    });
+
+    document.getElementById("read-answer").addEventListener("click", readCurrentAnswer);
+    document.getElementById("stop-reading").addEventListener("click", stopReading);
+    el.speechRate.addEventListener("input", (event) => {
+      setSpeechRate(event.target.value);
+      if ("speechSynthesis" in window && window.speechSynthesis.speaking) {
+        readCurrentAnswer();
+      }
+    });
+
+    document.getElementById("reveal-card").addEventListener("click", () => {
+      state.flashRevealed = !state.flashRevealed;
+      renderFlash();
+    });
+    document.getElementById("shuffle-card").addEventListener("click", () => setIndex(randomIndex()));
+    document.getElementById("flash-remembered").addEventListener("click", () => {
+      state.remembered.add(state.index);
+      save();
+      setIndex(state.index + 1);
+    });
+
+    document.getElementById("start-timer").addEventListener("click", startTimer);
+    document.getElementById("reset-timer").addEventListener("click", resetTimer);
+    document.getElementById("new-practice").addEventListener("click", () => {
+      resetTimer();
+      setIndex(randomIndex());
+    });
+    document.getElementById("start-mic").addEventListener("click", startMic);
+    document.getElementById("stop-mic").addEventListener("click", stopMic);
+    document.getElementById("save-note").addEventListener("click", () => {
+      state.notes[state.index] = el.notes.value;
+      save();
+    });
+    document.getElementById("clear-note").addEventListener("click", () => {
+      el.notes.value = "";
+      delete state.notes[state.index];
+      save();
+    });
+
+    document.getElementById("start-taps").addEventListener("click", startTaps);
+    document.getElementById("stop-taps").addEventListener("click", stopTaps);
+    el.tapGrid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-tap-index]");
+      if (!button || state.tapTarget < 0) return;
+      if (Number(button.dataset.tapIndex) === state.tapTarget) {
+        state.tapScore += 1;
+        el.tapScore.textContent = `Score ${state.tapScore}`;
+        moveTapTarget();
+      }
+    });
+
+    document.getElementById("new-match").addEventListener("click", buildMatchSet);
+    el.matchQuestions.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-match-question]");
+      if (!button) return;
+      state.selectedMatchQuestion = Number(button.dataset.matchQuestion);
+      el.matchQuestions.querySelectorAll("button").forEach((item) => item.classList.toggle("selected", item === button));
+      checkMatch();
+    });
+    el.matchAnswers.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-match-answer]");
+      if (!button) return;
+      state.selectedMatchAnswer = Number(button.dataset.matchAnswer);
+      el.matchAnswers.querySelectorAll("button").forEach((item) => item.classList.toggle("selected", item === button));
+      checkMatch();
+    });
+
+    document.getElementById("start-breath").addEventListener("click", startBreathing);
+    document.getElementById("stop-breath").addEventListener("click", stopBreathing);
+    document.getElementById("new-recovery").addEventListener("click", renderRecoveryPrompt);
+    document.getElementById("back-to-study").addEventListener("click", () => setMode("study"));
+    document.addEventListener("keydown", handleKeyboard);
+  </script>
+</body>
+</html>

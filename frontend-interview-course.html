@@ -1,0 +1,2787 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern React Frontend Interview Course</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --bg-soft: #0e1b2d;
+      --panel: #132238;
+      --panel-2: #172a45;
+      --text: #eef5ff;
+      --muted: #a8b7cc;
+      --faint: #6f829d;
+      --line: rgba(190, 214, 255, 0.14);
+      --brand: #62e6b6;
+      --brand-2: #6fb7ff;
+      --warn: #ffd166;
+      --danger: #ff7a90;
+      --code-bg: #07101d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+      --radius: 22px;
+      --mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(98, 230, 182, 0.16), transparent 34rem),
+        radial-gradient(circle at 85% 12%, rgba(111, 183, 255, 0.14), transparent 30rem),
+        linear-gradient(135deg, #060c16 0%, var(--bg) 42%, #0c1828 100%);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(8, 17, 31, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(98, 230, 182, 0.12), rgba(111, 183, 255, 0.08));
+      box-shadow: var(--shadow);
+    }
+
+    .brand strong {
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    .brand span,
+    .nav-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .nav-label {
+      display: block;
+      margin: 18px 10px 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav a {
+      display: block;
+      padding: 9px 10px;
+      color: var(--muted);
+      border-radius: 12px;
+      border: 1px solid transparent;
+      font-size: 0.92rem;
+      line-height: 1.25;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: var(--text);
+      border-color: rgba(98, 230, 182, 0.28);
+      background: rgba(98, 230, 182, 0.09);
+    }
+
+    .mobile-toggle {
+      display: none;
+      position: fixed;
+      z-index: 20;
+      top: 14px;
+      right: 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--text);
+      background: rgba(19, 34, 56, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    main {
+      min-width: 0;
+      padding: 48px clamp(20px, 5vw, 72px) 80px;
+    }
+
+    .hero {
+      max-width: 1120px;
+      padding: clamp(28px, 5vw, 56px);
+      margin-bottom: 34px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(135deg, rgba(98, 230, 182, 0.13), rgba(111, 183, 255, 0.10)),
+        rgba(19, 34, 56, 0.78);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(98, 230, 182, 0.28);
+      border-radius: 999px;
+      color: var(--brand);
+      background: rgba(98, 230, 182, 0.08);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2.5rem, 7vw, 5.6rem);
+    }
+
+    h2 {
+      font-size: clamp(1.9rem, 4vw, 3.35rem);
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.28rem;
+      margin: 28px 0 10px;
+    }
+
+    h4 {
+      font-size: 1rem;
+      margin: 22px 0 8px;
+      color: var(--brand);
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .hero p {
+      max-width: 840px;
+      font-size: 1.05rem;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .meta-card,
+    .card,
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(19, 34, 56, 0.78);
+    }
+
+    .meta-card {
+      padding: 16px;
+    }
+
+    .meta-card b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .meta-card span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    section {
+      max-width: 1120px;
+      padding: clamp(26px, 4vw, 42px);
+      margin: 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: rgba(8, 17, 31, 0.58);
+      box-shadow: var(--shadow);
+    }
+
+    .section-kicker {
+      color: var(--brand-2);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card ul,
+    .task-list,
+    .mistakes,
+    .practices {
+      margin: 10px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    li { margin: 7px 0; }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 0;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border: 1px solid rgba(111, 183, 255, 0.22);
+      border-radius: 999px;
+      color: #cde5ff;
+      background: rgba(111, 183, 255, 0.08);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    details {
+      margin: 12px 0;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      color: var(--text);
+      font-weight: 750;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    details[open] summary {
+      border-bottom: 1px solid var(--line);
+      color: var(--brand);
+    }
+
+    .details-body {
+      padding: 16px;
+    }
+
+    .code-wrap {
+      position: relative;
+      margin: 16px 0;
+      border: 1px solid rgba(190, 214, 255, 0.16);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--code-bg);
+    }
+
+    .code-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(190, 214, 255, 0.12);
+      color: var(--faint);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .copy-btn {
+      border: 1px solid rgba(98, 230, 182, 0.28);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: var(--brand);
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #d7e8ff;
+      font-family: var(--mono);
+      font-size: 0.86rem;
+      line-height: 1.6;
+      tab-size: 2;
+    }
+
+    code { font-family: var(--mono); }
+
+    :not(pre) > code {
+      padding: 0.12rem 0.34rem;
+      border: 1px solid rgba(190, 214, 255, 0.14);
+      border-radius: 8px;
+      color: #dff9ee;
+      background: rgba(98, 230, 182, 0.08);
+    }
+
+    .kw { color: #7cc7ff; }
+    .fn { color: #62e6b6; }
+    .str { color: #ffd166; }
+    .type { color: #ff9bd5; }
+    .com { color: #7388a5; }
+    .num { color: #b6a7ff; }
+
+    .callout {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border-left: 4px solid var(--brand);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(98, 230, 182, 0.08);
+    }
+
+    .warning {
+      border-left-color: var(--warn);
+      background: rgba(255, 209, 102, 0.08);
+    }
+
+    .danger {
+      border-left-color: var(--danger);
+      background: rgba(255, 122, 144, 0.08);
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      color: var(--muted);
+    }
+
+    .matrix th {
+      color: var(--text);
+      background: rgba(111, 183, 255, 0.08);
+    }
+
+    .section-footer {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .training-pack {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .training-pack h3 {
+      margin-top: 0;
+    }
+
+    .qa-list {
+      display: grid;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .qa-item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .qa-item b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .training-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+
+    .simulation-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .simulation-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(19, 34, 56, 0.72);
+    }
+
+    .simulation-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      letter-spacing: 0;
+    }
+
+    .answer-levels {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .answer-levels div {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.14);
+      font-size: 0.88rem;
+    }
+
+    .answer-levels strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--brand);
+    }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+
+      .mobile-toggle { display: inline-flex; }
+
+      .sidebar {
+        position: fixed;
+        z-index: 19;
+        inset: 0 auto 0 0;
+        width: min(86vw, 330px);
+        transform: translateX(-105%);
+        transition: transform 180ms ease;
+      }
+
+      body.nav-open .sidebar { transform: translateX(0); }
+
+      main { padding-top: 72px; }
+
+      .meta-grid,
+      .grid,
+      .training-columns,
+      .answer-levels { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <button class="mobile-toggle" type="button" aria-label="Toggle navigation">Menu</button>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <strong>Modern React Interview Course</strong>
+        <span>React 18, TypeScript, Vite, Router v7, Zustand, Recoil, React Query, D3, R3F, Zod, Auth0, Playwright.</span>
+      </div>
+      <span class="nav-label">Course Navigation</span>
+      <nav class="nav" aria-label="Course sections">
+        <a href="./soft-skills.html">Soft Skills Trainer</a>
+        <a href="#fundamentals">1. Fundamentals Recap</a>
+        <a href="#state-management">2. State Management</a>
+        <a href="#server-state">3. Server State</a>
+        <a href="#routing">4. Routing</a>
+        <a href="#architecture">5. Architecture</a>
+        <a href="#forms">6. Forms & Validation</a>
+        <a href="#d3">7. Data Visualization</a>
+        <a href="#three">8. 3D Graphics</a>
+        <a href="#drag-drop">9. Drag & Drop</a>
+        <a href="#animation">10. Animation</a>
+        <a href="#authentication">11. Authentication</a>
+        <a href="#i18n">12. Internationalization</a>
+        <a href="#performance">13. Performance</a>
+        <a href="#testing">14. Testing</a>
+        <a href="#build-tools">15. Build Tools</a>
+        <a href="#advanced-typescript">16. Advanced TypeScript</a>
+        <a href="#api-client">17. API Client Architecture</a>
+        <a href="#react-error-handling">18. React Error Handling</a>
+        <a href="#interview-simulation">19. Interview Simulation</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <span class="eyebrow">Interview-ready frontend architecture</span>
+        <h1>Master the modern React stack by reasoning like a production engineer.</h1>
+        <p>
+          This single-file course is designed for a frontend developer with roughly two years of experience.
+          It focuses on explaining tradeoffs, architecture, interview answers, and production-grade patterns for
+          the exact stack used in a Vite + React 18 + TypeScript application.
+        </p>
+        <div class="tag-row">
+          <a class="tag" href="./soft-skills.html">Go to Soft Skills Trainer</a>
+          <span class="tag">25 interview answers</span>
+        </div>
+        <div class="meta-grid">
+          <div class="meta-card"><b>Goal</b><span>Pass technical interviews and defend architectural decisions.</span></div>
+          <div class="meta-card"><b>Format</b><span>Concepts, code, mistakes, best practices, tasks, Q&A.</span></div>
+          <div class="meta-card"><b>Context</b><span>Dashboard and delivery-style business applications.</span></div>
+        </div>
+      </header>
+
+      <section id="fundamentals">
+        <div class="section-kicker">Section 01</div>
+        <h2>Fundamentals Recap</h2>
+        <p>
+          Interviews often start with fundamentals because they reveal whether you can debug real UI bugs.
+          React is not a template engine. It is a rendering runtime that turns state changes into a tree of React
+          elements, compares that tree with the previous one, and commits minimal DOM changes.
+        </p>
+        <div class="grid">
+          <article class="card">
+            <h3>Rendering Model</h3>
+            <p>
+              A render is a pure calculation of UI from current props, state, and context. It should not perform
+              network calls, DOM mutation, timers, subscriptions, or logging that affects behavior.
+            </p>
+            <ul>
+              <li>Render phase: React calls components and calculates the next tree.</li>
+              <li>Commit phase: React applies DOM changes and runs layout/effects.</li>
+              <li>Strict Mode may intentionally double-invoke render/effects in development to expose unsafe logic.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Reconciliation</h3>
+            <p>
+              Reconciliation compares element type, position, and keys. Keys are not only for warnings;
+              they define identity across renders.
+            </p>
+            <ul>
+              <li>Same component type usually preserves state.</li>
+              <li>Different type causes unmount/remount.</li>
+              <li>Changing keys intentionally resets component state.</li>
+            </ul>
+          </article>
+        </div>
+
+        <h3>State vs Props</h3>
+        <p>
+          Props are inputs owned by a parent. State is memory owned by a component or store. In interviews, explain
+          ownership: the component that needs to modify the data should usually own it, unless multiple distant
+          consumers require shared coordination.
+        </p>
+
+        <h3>Controlled vs Uncontrolled</h3>
+        <p>
+          Controlled components keep the source of truth in React state. Uncontrolled components keep it in the DOM
+          and read it through refs. Controlled inputs are easier to validate and synchronize; uncontrolled inputs can
+          reduce re-renders for large forms or simple file inputs.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>controlled-vs-uncontrolled.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { useRef, useState } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export function</span> <span class="fn">CourierSearch</span>() {
+  <span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">const</span> fileInputRef = <span class="fn">useRef</span>&lt;<span class="type">HTMLInputElement</span>&gt;(<span class="kw">null</span>);
+
+  <span class="kw">return</span> (
+    &lt;form&gt;
+      &lt;input
+        value={query}
+        onChange={(event) =&gt; <span class="fn">setQuery</span>(event.target.value)}
+        placeholder=<span class="str">"Search couriers by name or region"</span>
+      /&gt;
+
+      &lt;input ref={fileInputRef} type=<span class="str">"file"</span> accept=<span class="str">".csv"</span> /&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>useEffect Lifecycle, Deeply</h3>
+        <p>
+          <code>useEffect</code> synchronizes React with an external system: browser APIs, subscriptions, network
+          clients, analytics, timers, storage, or third-party widgets. If you are only deriving data from props/state,
+          you usually do not need an effect.
+        </p>
+        <div class="code-wrap">
+          <div class="code-title"><span>effect-subscription.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { useEffect, useState } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="type">type</span> VehiclePosition = {
+  vehicleId: <span class="type">string</span>;
+  lat: <span class="type">number</span>;
+  lng: <span class="type">number</span>;
+};
+
+<span class="kw">export function</span> <span class="fn">useVehiclePosition</span>(vehicleId: <span class="type">string</span>) {
+  <span class="kw">const</span> [position, setPosition] = <span class="fn">useState</span>&lt;<span class="type">VehiclePosition</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> socket = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">`wss://api.example.com/vehicles/${vehicleId}`</span>);
+
+    socket.onmessage = (event) =&gt; {
+      <span class="fn">setPosition</span>(<span class="fn">JSON</span>.parse(event.data));
+    };
+
+    <span class="kw">return</span> () =&gt; {
+      socket.close();
+    };
+  }, [vehicleId]);
+
+  <span class="kw">return</span> position;
+}</code></pre>
+        </div>
+
+        <div class="callout">
+          Interview answer: "Effects are for synchronization, not for calculating render data. Cleanup runs before
+          the next effect with changed dependencies and on unmount. Dependency arrays describe values captured by
+          the effect closure, not values I feel like watching."
+        </div>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Using array indexes as keys for sortable or editable lists.</li>
+          <li>Putting derived state in <code>useState</code> and syncing it with <code>useEffect</code>.</li>
+          <li>Mutating objects or arrays and expecting React to detect the change.</li>
+          <li>Ignoring cleanup for timers, event listeners, websockets, and subscriptions.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Keep render pure and deterministic.</li>
+          <li>Use stable domain IDs as keys.</li>
+          <li>Prefer derived values during render before introducing effects.</li>
+          <li>Make component ownership explicit: parent controls orchestration, child controls local UI detail.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use useEffect</summary>
+          <div class="details-body">
+            <p>
+              Do not use it to filter lists, calculate totals, copy props into state, or run logic that can happen
+              directly inside an event handler. Effects increase the number of states your UI can be in, so treat
+              them as integration points, not as a default control-flow primitive.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why can React re-render without changing the DOM?</b></p>
+            <p>A: Rendering calculates the next React element tree. React only mutates the DOM during commit if reconciliation finds changes.</p>
+            <p><b>Q: What problem do keys solve?</b></p>
+            <p>A: Keys let React preserve or reset identity for siblings across renders. They are critical when order changes.</p>
+            <p><b>Q: Why is copying props to state dangerous?</b></p>
+            <p>A: It creates two sources of truth. The local state can become stale when parent props change.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Build a searchable courier table with controlled filters.</li>
+              <li>Refactor one derived <code>useEffect</code> into render-time calculation.</li>
+              <li>Create a sortable list and demonstrate why index keys break input state.</li>
+              <li>Write a custom hook with subscription cleanup and explain its dependency array.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="state-management">
+        <div class="section-kicker">Section 02</div>
+        <h2>State Management</h2>
+        <p>
+          State management is critical because most frontend complexity comes from ownership, synchronization, and
+          invalidation. A strong interview answer separates local UI state, global client state, and server state.
+        </p>
+
+        <table class="matrix">
+          <thead>
+            <tr><th>State type</th><th>Examples</th><th>Best owner</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Local state</td><td>Dialog open, input value, selected tab</td><td>Component or custom hook</td></tr>
+            <tr><td>Global client state</td><td>Theme, command palette, draft workspace, selected organization</td><td>Zustand or Recoil</td></tr>
+            <tr><td>Server state</td><td>Orders, couriers, permissions, reports</td><td>TanStack React Query</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Zustand Deep Dive</h3>
+        <p>
+          Zustand is a small external store. It is excellent for imperative UI state and app-level state where
+          normalized graphs are not required. Components subscribe to selected slices, so selector quality matters.
+        </p>
+        <div class="code-wrap">
+          <div class="code-title"><span>stores/useWorkspaceStore.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { create } <span class="kw">from</span> <span class="str">"zustand"</span>;
+
+<span class="type">type</span> WorkspaceState = {
+  activeDepotId: <span class="type">string</span> | <span class="kw">null</span>;
+  sidebarCollapsed: <span class="type">boolean</span>;
+  setActiveDepot: (depotId: <span class="type">string</span>) =&gt; <span class="type">void</span>;
+  toggleSidebar: () =&gt; <span class="type">void</span>;
+};
+
+<span class="kw">export const</span> useWorkspaceStore = <span class="fn">create</span>&lt;<span class="type">WorkspaceState</span>&gt;((set) =&gt; ({
+  activeDepotId: <span class="kw">null</span>,
+  sidebarCollapsed: <span class="kw">false</span>,
+  setActiveDepot: (depotId) =&gt; <span class="fn">set</span>({ activeDepotId: depotId }),
+  toggleSidebar: () =&gt; <span class="fn">set</span>((state) =&gt; ({ sidebarCollapsed: !state.sidebarCollapsed })),
+}));
+
+<span class="kw">export function</span> <span class="fn">DepotSwitcher</span>() {
+  <span class="kw">const</span> activeDepotId = <span class="fn">useWorkspaceStore</span>((state) =&gt; state.activeDepotId);
+  <span class="kw">const</span> setActiveDepot = <span class="fn">useWorkspaceStore</span>((state) =&gt; state.setActiveDepot);
+
+  <span class="kw">return</span> &lt;button onClick={() =&gt; <span class="fn">setActiveDepot</span>(<span class="str">"warsaw-central"</span>)}&gt;{activeDepotId}&lt;/button&gt;;
+}</code></pre>
+        </div>
+
+        <h3>Recoil Atoms and Selectors Graph</h3>
+        <p>
+          Recoil models state as a graph. Atoms are source nodes; selectors are derived nodes. It fits cases where
+          many independent pieces of state compose into derived values and where fine-grained subscriptions are useful.
+        </p>
+        <div class="code-wrap">
+          <div class="code-title"><span>state/recoil-delivery.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { atom, selector } <span class="kw">from</span> <span class="str">"recoil"</span>;
+
+<span class="type">type</span> Delivery = {
+  id: <span class="type">string</span>;
+  status: <span class="str">"queued"</span> | <span class="str">"in_transit"</span> | <span class="str">"delivered"</span>;
+  priority: <span class="type">number</span>;
+};
+
+<span class="kw">export const</span> deliveriesAtom = <span class="fn">atom</span>&lt;<span class="type">Delivery</span>[]&gt;({
+  key: <span class="str">"deliveries"</span>,
+  default: [],
+});
+
+<span class="kw">export const</span> highPriorityDeliveriesSelector = <span class="fn">selector</span>({
+  key: <span class="str">"highPriorityDeliveries"</span>,
+  get: ({ get }) =&gt; <span class="fn">get</span>(deliveriesAtom).filter((delivery) =&gt; delivery.priority &gt;= <span class="num">8</span>),
+});</code></pre>
+        </div>
+
+        <h3>Zustand vs Recoil vs Redux</h3>
+        <table class="matrix">
+          <thead>
+            <tr><th>Tool</th><th>Strength</th><th>Tradeoff</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Zustand</td><td>Simple external store, low boilerplate, great for UI/app state</td><td>Less opinionated; architecture discipline is on the team</td></tr>
+            <tr><td>Recoil</td><td>Graph-based derived state and fine-grained subscriptions</td><td>Extra mental model; ecosystem is smaller</td></tr>
+            <tr><td>Redux Toolkit</td><td>Strict conventions, devtools, serializable event history</td><td>More ceremony for teams that do not need it</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Putting fetched API data into Zustand instead of React Query.</li>
+          <li>Creating one giant global store that becomes a hidden database.</li>
+          <li>Subscribing to entire Zustand state objects and causing broad re-renders.</li>
+          <li>Using global state because prop drilling exists two levels deep.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Classify state before choosing a library.</li>
+          <li>Keep actions near state transitions and use domain language.</li>
+          <li>Use selectors to subscribe to the smallest needed slice.</li>
+          <li>Do not duplicate server state in client stores.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use global state</summary>
+          <div class="details-body">
+            <p>
+              Avoid global state for input fields, hover state, simple modal state local to one page, or fetched data
+              already managed by React Query. Global state should represent cross-cutting client state, not convenience.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: How do you decide between Zustand and React Query?</b></p>
+            <p>A: React Query owns asynchronous server state, caching, retries, invalidation, and background refetching. Zustand owns synchronous client state like UI preferences or current workspace context.</p>
+            <p><b>Q: Why can global stores become an anti-pattern?</b></p>
+            <p>A: They hide ownership and lifecycle. Without boundaries, any feature can mutate any state and debugging becomes harder.</p>
+            <p><b>Q: When would Recoil be a better fit than Zustand?</b></p>
+            <p>A: When the app has many small, composable state nodes with derived selectors and fine-grained subscriptions.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Model a workspace store with selected depot, selected route, and panel state.</li>
+              <li>Move fetched order data from a global store into React Query.</li>
+              <li>Create a Recoil selector that derives delayed deliveries by depot.</li>
+              <li>Explain in writing why each state value is local, global, or server state.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="server-state">
+        <div class="section-kicker">Section 03</div>
+        <h2>Server State with TanStack React Query v5</h2>
+        <p>
+          Server state is remote, shared, asynchronous, and can become stale without any user interaction. React Query
+          solves caching, deduplication, retries, invalidation, background refetching, and mutation workflows.
+        </p>
+
+        <h3>Caching Strategy</h3>
+        <p>
+          A query key is the cache address. It should include every parameter that changes the result. In v5,
+          <code>gcTime</code> replaced the old <code>cacheTime</code> name. In interviews, mention both if the team
+          uses mixed terminology.
+        </p>
+        <div class="code-wrap">
+          <div class="code-title"><span>api/useOrders.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { useQuery, useMutation, useQueryClient } <span class="kw">from</span> <span class="str">"@tanstack/react-query"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+<span class="kw">import</span> { api } <span class="kw">from</span> <span class="str">"./axiosClient"</span>;
+
+<span class="kw">const</span> orderSchema = z.object({
+  id: z.string(),
+  status: z.enum([<span class="str">"queued"</span>, <span class="str">"assigned"</span>, <span class="str">"delivered"</span>]),
+  customerName: z.string(),
+});
+
+<span class="kw">export function</span> <span class="fn">useOrders</span>(depotId: <span class="type">string</span>) {
+  <span class="kw">return</span> <span class="fn">useQuery</span>({
+    queryKey: [<span class="str">"orders"</span>, { depotId }],
+    queryFn: <span class="kw">async</span> () =&gt; {
+      <span class="kw">const</span> response = <span class="kw">await</span> api.get(<span class="str">"/orders"</span>, { params: { depotId } });
+      <span class="kw">return</span> z.array(orderSchema).parse(response.data);
+    },
+    staleTime: <span class="num">30_000</span>,
+    gcTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1_000</span>,
+  });
+}</code></pre>
+        </div>
+
+        <h3>staleTime vs cacheTime/gcTime</h3>
+        <p>
+          <code>staleTime</code> controls freshness. While data is fresh, React Query will not refetch just because
+          a component remounts. <code>gcTime</code> controls how long unused cached data stays in memory after the
+          last observer unmounts.
+        </p>
+
+        <h3>Mutations and Optimistic Updates</h3>
+        <div class="code-wrap">
+          <div class="code-title"><span>optimistic-update.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">export function</span> <span class="fn">useAssignCourier</span>(depotId: <span class="type">string</span>) {
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>();
+
+  <span class="kw">return</span> <span class="fn">useMutation</span>({
+    mutationFn: (input: { orderId: <span class="type">string</span>; courierId: <span class="type">string</span> }) =&gt;
+      api.post(<span class="str">`/orders/${input.orderId}/assign`</span>, { courierId: input.courierId }),
+
+    onMutate: <span class="kw">async</span> (input) =&gt; {
+      <span class="kw">const</span> key = [<span class="str">"orders"</span>, { depotId }];
+      <span class="kw">await</span> queryClient.cancelQueries({ queryKey: key });
+      <span class="kw">const</span> previous = queryClient.getQueryData(key);
+
+      queryClient.setQueryData(key, (orders: <span class="type">any</span>[] | <span class="kw">undefined</span>) =&gt;
+        orders?.map((order) =&gt;
+          order.id === input.orderId ? { ...order, status: <span class="str">"assigned"</span> } : order,
+        ),
+      );
+
+      <span class="kw">return</span> { previous, key };
+    },
+
+    onError: (_error, _input, context) =&gt; {
+      queryClient.setQueryData(context?.key ?? [], context?.previous);
+    },
+
+    onSettled: () =&gt; {
+      queryClient.invalidateQueries({ queryKey: [<span class="str">"orders"</span>, { depotId }] });
+    },
+  });
+}</code></pre>
+        </div>
+
+        <h3>Error Handling</h3>
+        <p>
+          Separate transport errors, authentication errors, validation errors, and business errors. Use Axios
+          interceptors for cross-cutting concerns, but keep domain-specific behavior near the query or mutation.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Using unstable query keys like raw non-serializable class instances.</li>
+          <li>Invalidating every query after every mutation.</li>
+          <li>Using React Query for local state like selected tab.</li>
+          <li>Setting infinite <code>staleTime</code> for data that must reflect operational reality.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Create query key factories for complex domains.</li>
+          <li>Validate API responses at runtime with Zod when backend contracts can drift.</li>
+          <li>Use optimistic updates only when rollback behavior is clear.</li>
+          <li>Prefer targeted invalidation over broad cache flushing.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use React Query</summary>
+          <div class="details-body">
+            <p>
+              Do not use it for purely local UI state, synchronous calculations, form drafts before submit, or
+              state that does not represent remote data. React Query is not a replacement for all state management.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: What makes server state different from client state?</b></p>
+            <p>A: It is owned remotely, can be changed by other users, must be fetched asynchronously, and can become stale.</p>
+            <p><b>Q: What is the difference between staleTime and gcTime?</b></p>
+            <p>A: staleTime controls freshness; gcTime controls how long inactive cached data remains before garbage collection.</p>
+            <p><b>Q: How do you prevent race conditions during optimistic updates?</b></p>
+            <p>A: Cancel relevant queries, snapshot previous data, update cache, rollback on error, and invalidate after settlement.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Create a query key factory for orders, couriers, reports, and depot details.</li>
+              <li>Implement optimistic assignment with rollback and a visible error state.</li>
+              <li>Define freshness rules for dashboards, detail pages, and archived reports.</li>
+              <li>Explain why copying query data into Zustand is usually wrong.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="routing">
+        <div class="section-kicker">Section 04</div>
+        <h2>Routing with React Router v7</h2>
+        <p>
+          Routing is architecture. It defines layout boundaries, data ownership, authorization gates, lazy loading,
+          and navigation behavior. React Router v7 continues the route object and nested layout model.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>router.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { lazy, Suspense } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { createBrowserRouter, Outlet } <span class="kw">from</span> <span class="str">"react-router"</span>;
+
+<span class="kw">const</span> OrdersPage = <span class="fn">lazy</span>(() =&gt; <span class="kw">import</span>(<span class="str">"./features/orders/OrdersPage"</span>));
+
+<span class="kw">function</span> <span class="fn">DashboardLayout</span>() {
+  <span class="kw">return</span> (
+    &lt;AppShell&gt;
+      &lt;Suspense fallback={&lt;PageSkeleton /&gt;}&gt;
+        &lt;Outlet /&gt;
+      &lt;/Suspense&gt;
+    &lt;/AppShell&gt;
+  );
+}
+
+<span class="kw">export const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="str">"/"</span>,
+    element: &lt;DashboardLayout /&gt;,
+    children: [
+      { index: <span class="kw">true</span>, element: &lt;HomePage /&gt; },
+      { path: <span class="str">"orders"</span>, element: &lt;OrdersPage /&gt; },
+      { path: <span class="str">"orders/:orderId"</span>, element: &lt;OrderDetailsPage /&gt; },
+    ],
+  },
+]);</code></pre>
+        </div>
+
+        <h3>Nested Routes and Layouts</h3>
+        <p>
+          Nested routes let parent layouts persist while child pages change. This is important for dashboards where
+          the sidebar, header, auth context, and workspace shell should not remount on every navigation.
+        </p>
+
+        <h3>Navigation Patterns</h3>
+        <p>
+          Use links for user-visible navigation and imperative navigation for post-action redirects. Keep route params
+          as part of URL state when the page should be shareable or restorable.
+        </p>
+
+        <h3>SPA vs MPA and SEO</h3>
+        <p>
+          SPAs provide fast client transitions and rich stateful interactions, but SEO and first load can be weaker
+          without SSR or prerendering. For authenticated delivery dashboards, SEO is usually less important than
+          usability, caching, and permission boundaries.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Using global state for route state that belongs in the URL.</li>
+          <li>Placing all routes in one flat list and duplicating layouts.</li>
+          <li>Lazy loading tiny components while leaving heavy pages eager.</li>
+          <li>Performing auth checks only in UI components and not in API calls.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use layout routes for shared shells and authorization boundaries.</li>
+          <li>Keep route paths stable and meaningful.</li>
+          <li>Code split by page or heavy feature, not by every component.</li>
+          <li>Use search params for filters that should survive reload/share.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to put state in the URL</summary>
+          <div class="details-body">
+            <p>
+              Do not put sensitive tokens, large draft objects, transient hover state, or purely visual animation state
+              into the URL. URL state should be shareable, serializable, and safe to expose.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why are nested routes useful?</b></p>
+            <p>A: They express UI hierarchy, preserve layout state, and keep shared shells from remounting unnecessarily.</p>
+            <p><b>Q: What should live in search params?</b></p>
+            <p>A: Shareable, serializable state such as filters, sorting, pagination, and selected view modes.</p>
+            <p><b>Q: What are SEO implications of an SPA?</b></p>
+            <p>A: Client-rendered content may be harder for crawlers and slower to first meaningful content without SSR or prerendering.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Design route hierarchy for dashboard, orders, couriers, reports, and settings.</li>
+              <li>Move table filters from Zustand into search params.</li>
+              <li>Add a lazy route for a heavy D3 reporting page.</li>
+              <li>Define auth layout boundaries for public, authenticated, and admin areas.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="architecture">
+        <div class="section-kicker">Section 05</div>
+        <h2>Architecture and Project Structure</h2>
+        <p>
+          Good frontend architecture reduces coupling. You should be able to change the data-fetching client, form
+          library, or route structure without rewriting every feature. Architecture is about dependency direction.
+        </p>
+
+        <h3>Feature-Based vs Layer-Based</h3>
+        <p>
+          Layer-based folders group by technical type: components, hooks, services. Feature-based folders group by
+          business capability: orders, couriers, reports. For large product apps, feature-based usually scales better
+          because ownership and change frequency align with business domains.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>scalable-folder-structure.txt</span><button class="copy-btn">Copy</button></div>
+          <pre><code>src/
+  app/
+    router.tsx
+    providers.tsx
+  shared/
+    api/
+      axiosClient.ts
+    ui/
+      Button.tsx
+      EmptyState.tsx
+    lib/
+      formatDate.ts
+  features/
+    orders/
+      api/
+        orderQueries.ts
+        orderSchemas.ts
+      components/
+        OrderTable.tsx
+      hooks/
+        useOrderFilters.ts
+      pages/
+        OrdersPage.tsx
+    couriers/
+    reports/</code></pre>
+        </div>
+
+        <h3>API Layer Separation</h3>
+        <p>
+          Keep Axios configuration, request functions, schemas, and React Query hooks separated enough that each layer
+          has one job. Avoid calling <code>axios.get</code> directly inside random components.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>api-layer.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">export async function</span> <span class="fn">getOrder</span>(orderId: <span class="type">string</span>) {
+  <span class="kw">const</span> response = <span class="kw">await</span> api.get(<span class="str">`/orders/${orderId}`</span>);
+  <span class="kw">return</span> orderSchema.parse(response.data);
+}
+
+<span class="kw">export function</span> <span class="fn">useOrder</span>(orderId: <span class="type">string</span>) {
+  <span class="kw">return</span> <span class="fn">useQuery</span>({
+    queryKey: orderKeys.detail(orderId),
+    queryFn: () =&gt; <span class="fn">getOrder</span>(orderId),
+    enabled: Boolean(orderId),
+  });
+}</code></pre>
+        </div>
+
+        <h3>Clean Architecture in Frontend</h3>
+        <p>
+          Clean frontend architecture means UI depends on feature contracts, not transport details. Domain concepts
+          should not know about React components. API adapters should not decide visual behavior.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Creating a generic <code>utils</code> folder that becomes a dumping ground.</li>
+          <li>Mixing API response shapes directly into UI components.</li>
+          <li>Putting all hooks in one global hooks directory without domain ownership.</li>
+          <li>Over-abstracting before the second real use case exists.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Prefer feature boundaries for domain code.</li>
+          <li>Keep shared code truly shared and stable.</li>
+          <li>Define small API functions and compose them with React Query hooks.</li>
+          <li>Use Zod schemas at the boundary where untrusted data enters the app.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to introduce heavy architecture</summary>
+          <div class="details-body">
+            <p>
+              Avoid complex layering for prototypes, throwaway admin screens, or tiny apps. Architecture should solve
+              coupling and change problems, not create ceremony to look professional.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why is feature-based structure often better for product apps?</b></p>
+            <p>A: It aligns code ownership with business capabilities, making changes easier to localize.</p>
+            <p><b>Q: What belongs in shared?</b></p>
+            <p>A: Stable, domain-neutral building blocks used by multiple features, such as UI primitives, API client setup, and formatting helpers.</p>
+            <p><b>Q: How do hooks help architecture?</b></p>
+            <p>A: Hooks encapsulate interaction with external systems or feature-specific state while keeping components focused on rendering.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Design a feature folder for reporting with API, schemas, hooks, components, and pages.</li>
+              <li>Refactor a component that directly calls Axios into an API function and query hook.</li>
+              <li>Identify which modules should be shared and which should remain feature-local.</li>
+              <li>Write dependency rules for app, shared, and feature folders.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="forms">
+        <div class="section-kicker">Section 06</div>
+        <h2>Forms and Validation with Zod</h2>
+        <p>
+          TypeScript checks your code before runtime. Zod checks untrusted values at runtime. Interviews often test
+          whether you understand this boundary. API responses, URL params, local storage, and form submissions are
+          untrusted until validated.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>delivery-form-schema.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">export const</span> deliveryFormSchema = z.object({
+  customerName: z.string().min(<span class="num">2</span>, <span class="str">"Customer name is required"</span>),
+  address: z.string().min(<span class="num">8</span>),
+  priority: z.coerce.number().int().min(<span class="num">1</span>).max(<span class="num">10</span>),
+  scheduledAt: z.string().datetime(),
+});
+
+<span class="kw">export type</span> DeliveryFormValues = z.infer&lt;<span class="kw">typeof</span> deliveryFormSchema&gt;;
+
+<span class="kw">export function</span> <span class="fn">parseDeliveryForm</span>(formData: <span class="type">FormData</span>) {
+  <span class="kw">return</span> deliveryFormSchema.safeParse({
+    customerName: formData.get(<span class="str">"customerName"</span>),
+    address: formData.get(<span class="str">"address"</span>),
+    priority: formData.get(<span class="str">"priority"</span>),
+    scheduledAt: formData.get(<span class="str">"scheduledAt"</span>),
+  });
+}</code></pre>
+        </div>
+
+        <h3>Runtime vs Compile-Time Validation</h3>
+        <p>
+          TypeScript cannot guarantee that an API response matches your types. A type annotation can lie. Zod parses
+          actual runtime values and returns either validated data or structured errors.
+        </p>
+
+        <h3>Form Patterns</h3>
+        <p>
+          Keep form drafts local unless multiple pages need them. Validate on submit for expensive forms, and validate
+          critical fields on blur/change when fast feedback matters. Convert string inputs into domain types at the
+          boundary, not throughout the app.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Assuming TypeScript validates API responses.</li>
+          <li>Duplicating validation rules across UI and backend without shared contracts.</li>
+          <li>Keeping every keystroke in global state.</li>
+          <li>Showing raw technical validation messages to users.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use Zod at external boundaries: forms, API responses, local storage, URL params.</li>
+          <li>Infer TypeScript types from schemas to avoid duplicate type definitions.</li>
+          <li>Normalize data before sending it to mutations.</li>
+          <li>Map validation errors into user-focused messages.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use Zod</summary>
+          <div class="details-body">
+            <p>
+              Do not validate purely internal values already constructed by typed code unless the boundary is unclear.
+              Over-validating every internal function call adds noise without meaningful safety.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why use Zod if TypeScript already exists?</b></p>
+            <p>A: TypeScript disappears at runtime. Zod validates real values crossing external boundaries.</p>
+            <p><b>Q: What is the benefit of <code>z.infer</code>?</b></p>
+            <p>A: It derives TypeScript types from the schema, preventing schema/type drift.</p>
+            <p><b>Q: Where should validation happen?</b></p>
+            <p>A: At the boundary where untrusted data enters, then the rest of the app can rely on validated shapes.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Create schemas for order creation, courier update, and report filters.</li>
+              <li>Map Zod errors into field-level UI messages.</li>
+              <li>Validate URL search params before using them in a React Query key.</li>
+              <li>Explain why API types generated from OpenAPI may still need runtime validation in risky boundaries.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="d3">
+        <div class="section-kicker">Section 07</div>
+        <h2>Data Visualization with D3</h2>
+        <p>
+          D3 is not "a chart library"; it is a data-to-visual-primitive toolkit. Its strongest parts are scales,
+          shapes, axes, layouts, and data transforms. In React apps, use D3 for math and React for DOM when possible.
+        </p>
+
+        <h3>Scales</h3>
+        <p>
+          A scale maps data domain to visual range. For example, delivery duration in minutes maps to bar width in
+          pixels. Good scale design is the foundation of readable charts.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>DeliveryDurationChart.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { scaleLinear, max } <span class="kw">from</span> <span class="str">"d3"</span>;
+
+<span class="type">type</span> Row = { courier: <span class="type">string</span>; minutes: <span class="type">number</span> };
+
+<span class="kw">export function</span> <span class="fn">DeliveryDurationChart</span>({ data }: { data: <span class="type">Row</span>[] }) {
+  <span class="kw">const</span> width = <span class="num">640</span>;
+  <span class="kw">const</span> barHeight = <span class="num">32</span>;
+  <span class="kw">const</span> x = <span class="fn">scaleLinear</span>()
+    .domain([<span class="num">0</span>, <span class="fn">max</span>(data, (row) =&gt; row.minutes) ?? <span class="num">0</span>])
+    .range([<span class="num">0</span>, width]);
+
+  <span class="kw">return</span> (
+    &lt;svg width={width} height={data.length * barHeight} role=<span class="str">"img"</span>&gt;
+      {data.map((row, index) =&gt; (
+        &lt;g key={row.courier} transform={<span class="str">`translate(0 ${index * barHeight})`</span>}&gt;
+          &lt;rect width={x(row.minutes)} height={24} rx={6} /&gt;
+          &lt;text x={8} y={17}&gt;{row.courier}: {row.minutes}m&lt;/text&gt;
+        &lt;/g&gt;
+      ))}
+    &lt;/svg&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>Data Binding and React Integration</h3>
+        <p>
+          Classic D3 selects DOM nodes and mutates them. React also wants to own the DOM. Mixing both carelessly
+          causes bugs. A pragmatic pattern is: D3 calculates scales/paths/layouts; React renders SVG elements.
+        </p>
+
+        <h3>Performance Considerations</h3>
+        <p>
+          Large visualizations can bottleneck on DOM nodes. Use canvas/WebGL for huge point clouds, virtualization for
+          long lists, and avoid recalculating expensive layouts on every keystroke.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Letting D3 and React both mutate the same DOM subtree.</li>
+          <li>Using charts without accessible labels or data summaries.</li>
+          <li>Ignoring empty data, outliers, and domain padding.</li>
+          <li>Rendering thousands of SVG nodes without measuring performance.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use D3 for scale and shape math; use React for rendering.</li>
+          <li>Keep chart dimensions explicit and responsive.</li>
+          <li>Handle loading, empty, error, and partial data states.</li>
+          <li>Use semantic titles, labels, and accessible summaries.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use D3</summary>
+          <div class="details-body">
+            <p>
+              Avoid D3 when a maintained charting library already covers your needs and customization requirements
+              are low. D3 is powerful, but it transfers responsibility for accessibility, interactions, and edge cases
+              to your team.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why can D3 conflict with React?</b></p>
+            <p>A: Both can mutate DOM. If D3 changes DOM that React thinks it owns, React can overwrite or misinterpret the result.</p>
+            <p><b>Q: What is a scale?</b></p>
+            <p>A: A function that maps data values from a domain to visual values in a range.</p>
+            <p><b>Q: When would you choose canvas over SVG?</b></p>
+            <p>A: When rendering very large numbers of marks where DOM node count becomes too expensive.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Create a depot performance bar chart with D3 scales and React-rendered SVG.</li>
+              <li>Add empty, loading, and error states.</li>
+              <li>Document why SVG or canvas is the right rendering target.</li>
+              <li>Add an accessible chart summary for screen readers.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="three">
+        <div class="section-kicker">Section 08</div>
+        <h2>3D Graphics with Three.js, React Three Fiber, and Drei</h2>
+        <p>
+          Three.js wraps WebGL into a scene graph. React Three Fiber maps that scene graph into React components.
+          Drei provides useful helpers like cameras, controls, loaders, and environment presets.
+        </p>
+
+        <h3>WebGL Basics</h3>
+        <p>
+          WebGL renders on the GPU. A 3D scene needs a renderer, scene, camera, geometry, material, lights, and a
+          render loop. R3F hides much of the setup but not the performance constraints.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>DepotMap3D.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { Canvas, useFrame } <span class="kw">from</span> <span class="str">"@react-three/fiber"</span>;
+<span class="kw">import</span> { OrbitControls } <span class="kw">from</span> <span class="str">"@react-three/drei"</span>;
+<span class="kw">import</span> { useRef } <span class="kw">from</span> <span class="str">"react"</span>;
+<span class="kw">import</span> { Mesh } <span class="kw">from</span> <span class="str">"three"</span>;
+
+<span class="kw">function</span> <span class="fn">DeliveryNode</span>({ delay }: { delay: <span class="type">number</span> }) {
+  <span class="kw">const</span> meshRef = <span class="fn">useRef</span>&lt;<span class="type">Mesh</span>&gt;(<span class="kw">null</span>);
+
+  <span class="fn">useFrame</span>((_, delta) =&gt; {
+    <span class="kw">if</span> (meshRef.current) meshRef.current.rotation.y += delta;
+  });
+
+  <span class="kw">return</span> (
+    &lt;mesh ref={meshRef} position={[delay, <span class="num">0</span>, <span class="num">0</span>]}&gt;
+      &lt;boxGeometry args={[<span class="num">1</span>, <span class="num">1</span>, <span class="num">1</span>]} /&gt;
+      &lt;meshStandardMaterial color={delay &gt; <span class="num">5</span> ? <span class="str">"tomato"</span> : <span class="str">"seagreen"</span>} /&gt;
+    &lt;/mesh&gt;
+  );
+}
+
+<span class="kw">export function</span> <span class="fn">DepotMap3D</span>() {
+  <span class="kw">return</span> (
+    &lt;Canvas camera={{ position: [<span class="num">0</span>, <span class="num">4</span>, <span class="num">8</span>] }}&gt;
+      &lt;ambientLight intensity={0.5} /&gt;
+      &lt;directionalLight position={[<span class="num">3</span>, <span class="num">5</span>, <span class="num">2</span>]} /&gt;
+      &lt;DeliveryNode delay={3} /&gt;
+      &lt;DeliveryNode delay={7} /&gt;
+      &lt;OrbitControls /&gt;
+    &lt;/Canvas&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>Performance Tips</h3>
+        <p>
+          Avoid creating new geometries, materials, and textures every render. Dispose resources when needed. Use
+          instancing for many repeated objects. Keep render-loop work small and avoid React state updates every frame.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Updating React state inside <code>useFrame</code> on every frame.</li>
+          <li>Creating materials inline for thousands of objects.</li>
+          <li>Ignoring GPU memory and texture sizes.</li>
+          <li>Using 3D where a 2D chart would communicate better.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use R3F declarative components but remember the underlying Three.js objects.</li>
+          <li>Memoize or reuse heavy resources when appropriate.</li>
+          <li>Use instanced meshes for repeated objects.</li>
+          <li>Profile FPS and memory on target devices.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use 3D</summary>
+          <div class="details-body">
+            <p>
+              Avoid 3D for standard dashboards, basic charts, or accessibility-critical workflows where spatial
+              interaction adds cognitive load without business value.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: What are scene, camera, and mesh?</b></p>
+            <p>A: The scene contains objects, the camera defines the viewpoint, and a mesh combines geometry with material.</p>
+            <p><b>Q: What does R3F abstract?</b></p>
+            <p>A: It lets you express Three.js scene objects as React components and coordinates rendering through React.</p>
+            <p><b>Q: Why avoid setState in every frame?</b></p>
+            <p>A: It forces React reconciliation at frame rate. Direct refs are often better for per-frame 3D updates.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Create a 3D depot scene with delayed deliveries highlighted.</li>
+              <li>Replace repeated meshes with instancing.</li>
+              <li>Measure FPS before and after optimization.</li>
+              <li>Explain when a 2D D3 visualization is better than R3F.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="drag-drop">
+        <div class="section-kicker">Section 09</div>
+        <h2>Drag and Drop: dnd-kit vs react-dnd</h2>
+        <p>
+          Drag and drop libraries differ in mental model. dnd-kit is modern, accessible, and excellent for sortable UI.
+          react-dnd is backend-based and strong for complex drag sources/drop targets, including tree-like interactions.
+        </p>
+
+        <table class="matrix">
+          <thead>
+            <tr><th>Library</th><th>Best for</th><th>Tradeoff</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>dnd-kit</td><td>Sortable lists, boards, accessible interactions</td><td>You build more domain behavior yourself</td></tr>
+            <tr><td>react-dnd</td><td>Complex drag source/drop target systems, custom backends</td><td>More abstraction and setup complexity</td></tr>
+          </tbody>
+        </table>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>sortable-routes.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { DndContext, DragEndEvent } <span class="kw">from</span> <span class="str">"@dnd-kit/core"</span>;
+<span class="kw">import</span> { SortableContext, arrayMove } <span class="kw">from</span> <span class="str">"@dnd-kit/sortable"</span>;
+
+<span class="kw">export function</span> <span class="fn">RouteStopSorter</span>({ stops, setStops }: <span class="type">Props</span>) {
+  <span class="kw">function</span> <span class="fn">handleDragEnd</span>(event: <span class="type">DragEndEvent</span>) {
+    <span class="kw">const</span> { active, over } = event;
+    <span class="kw">if</span> (!over || active.id === over.id) <span class="kw">return</span>;
+
+    <span class="kw">const</span> oldIndex = stops.findIndex((stop) =&gt; stop.id === active.id);
+    <span class="kw">const</span> newIndex = stops.findIndex((stop) =&gt; stop.id === over.id);
+    <span class="fn">setStops</span>(<span class="fn">arrayMove</span>(stops, oldIndex, newIndex));
+  }
+
+  <span class="kw">return</span> (
+    &lt;DndContext onDragEnd={handleDragEnd}&gt;
+      &lt;SortableContext items={stops.map((stop) =&gt; stop.id)}&gt;
+        {stops.map((stop) =&gt; &lt;SortableStop key={stop.id} stop={stop} /&gt;)}
+      &lt;/SortableContext&gt;
+    &lt;/DndContext&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Using array indexes as draggable IDs.</li>
+          <li>Updating server order on every hover instead of committed drop.</li>
+          <li>Ignoring keyboard accessibility.</li>
+          <li>Mixing layout animation and drag transforms without testing.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use stable IDs for drag identity.</li>
+          <li>Keep optimistic reordering local and persist after drop.</li>
+          <li>Provide keyboard and screen reader affordances where possible.</li>
+          <li>Choose react-dnd when drag types/backends matter more than sorting.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use drag and drop</summary>
+          <div class="details-body">
+            <p>
+              Avoid drag and drop when ordering can be handled with explicit priority fields, bulk actions, or simple
+              buttons. DnD is harder to test, less discoverable, and often weaker on mobile/accessibility.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why are stable draggable IDs important?</b></p>
+            <p>A: They preserve item identity across reorders and prevent state from attaching to the wrong item.</p>
+            <p><b>Q: When choose react-dnd over dnd-kit?</b></p>
+            <p>A: For complex drag sources/drop targets, custom backends, or tree interactions where sortable-first abstractions are not enough.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Build a sortable delivery-stop list with optimistic save on drop.</li>
+              <li>Add keyboard-accessible reorder controls.</li>
+              <li>Compare implementation complexity between dnd-kit and react-dnd for a tree view.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="animation">
+        <div class="section-kicker">Section 10</div>
+        <h2>Animation with Framer Motion</h2>
+        <p>
+          Animation should clarify state change, not decorate every interaction. Framer Motion is useful for presence,
+          layout transitions, gestures, and orchestrated UI motion.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>AnimatedOrderCard.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { motion, AnimatePresence } <span class="kw">from</span> <span class="str">"framer-motion"</span>;
+
+<span class="kw">export function</span> <span class="fn">OrderCard</span>({ order, expanded }: <span class="type">Props</span>) {
+  <span class="kw">return</span> (
+    &lt;motion.article layout initial={{ opacity: <span class="num">0</span>, y: <span class="num">12</span> }} animate={{ opacity: <span class="num">1</span>, y: <span class="num">0</span> }}&gt;
+      &lt;h3&gt;{order.customerName}&lt;/h3&gt;
+      &lt;AnimatePresence&gt;
+        {expanded ? (
+          &lt;motion.div
+            key=<span class="str">"details"</span>
+            initial={{ opacity: <span class="num">0</span>, height: <span class="num">0</span> }}
+            animate={{ opacity: <span class="num">1</span>, height: <span class="str">"auto"</span> }}
+            exit={{ opacity: <span class="num">0</span>, height: <span class="num">0</span> }}
+          &gt;
+            &lt;p&gt;Courier: {order.courierName}&lt;/p&gt;
+          &lt;/motion.div&gt;
+        ) : null}
+      &lt;/AnimatePresence&gt;
+    &lt;/motion.article&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>Performance Considerations</h3>
+        <p>
+          Prefer transform and opacity. Animating layout properties like width, height, top, or left can trigger layout
+          recalculation, though Framer Motion can help with layout animations. Respect reduced motion preferences.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Animating everything and making the UI feel slower.</li>
+          <li>Forgetting <code>key</code> with <code>AnimatePresence</code>.</li>
+          <li>Animating expensive layout properties in large lists.</li>
+          <li>Ignoring reduced motion accessibility.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use motion to explain transitions and hierarchy.</li>
+          <li>Animate transform/opacity where possible.</li>
+          <li>Keep durations short for operational dashboards.</li>
+          <li>Disable or simplify motion for users who prefer reduced motion.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use Framer Motion</summary>
+          <div class="details-body">
+            <p>
+              Avoid it for trivial hover states that CSS handles better, or in performance-critical visualizations
+              where animation is controlled by canvas/WebGL loops.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why prefer transform animations?</b></p>
+            <p>A: They are usually composited by the browser and avoid expensive layout recalculation.</p>
+            <p><b>Q: What does AnimatePresence do?</b></p>
+            <p>A: It allows components leaving the React tree to animate before being removed from the DOM.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Add layout animations to a filterable order board.</li>
+              <li>Implement reduced-motion behavior.</li>
+              <li>Explain why a motion improves or hurts task completion.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="authentication">
+        <div class="section-kicker">Section 11</div>
+        <h2>Authentication with Auth0 and JWT</h2>
+        <p>
+          Authentication proves identity. Authorization decides access. A JWT is a signed token containing claims,
+          but it is not encrypted by default. Anyone who has it can read its payload; only the signature prevents
+          tampering.
+        </p>
+
+        <h3>JWT Structure</h3>
+        <p>
+          JWTs have three parts: header, payload, signature. The payload may include <code>sub</code>, <code>aud</code>,
+          <code>iss</code>, <code>exp</code>, scopes, roles, and tenant claims. Never store secrets in the payload.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>auth0-axios.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> axios <span class="kw">from</span> <span class="str">"axios"</span>;
+<span class="kw">import</span> { useAuth0 } <span class="kw">from</span> <span class="str">"@auth0/auth0-react"</span>;
+
+<span class="kw">export const</span> api = axios.create({
+  baseURL: <span class="kw">import</span>.meta.env.VITE_API_URL,
+});
+
+<span class="kw">export function</span> <span class="fn">useAuthenticatedApi</span>() {
+  <span class="kw">const</span> { getAccessTokenSilently } = <span class="fn">useAuth0</span>();
+
+  <span class="kw">async function</span> <span class="fn">request</span>&lt;<span class="type">T</span>&gt;(path: <span class="type">string</span>) {
+    <span class="kw">const</span> token = <span class="kw">await</span> <span class="fn">getAccessTokenSilently</span>();
+    <span class="kw">const</span> response = <span class="kw">await</span> api.get&lt;<span class="type">T</span>&gt;(path, {
+      headers: { Authorization: <span class="str">`Bearer ${token}`</span> },
+    });
+    <span class="kw">return</span> response.data;
+  }
+
+  <span class="kw">return</span> { request };
+}</code></pre>
+        </div>
+
+        <h3>Token Storage Strategies</h3>
+        <p>
+          In SPAs, token storage is a security tradeoff. Memory storage reduces persistent XSS exposure but loses
+          tokens on reload. Local storage survives reload but is exposed to XSS. HttpOnly cookies reduce JS access but
+          require CSRF-aware design. Auth0 SDKs generally handle much of this flow.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Putting sensitive information into JWT payloads.</li>
+          <li>Trusting decoded JWT claims on the frontend as the final authority.</li>
+          <li>Storing long-lived tokens in local storage without understanding XSS risk.</li>
+          <li>Only hiding buttons instead of enforcing authorization on the backend.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use short-lived access tokens and refresh/rotation through the provider.</li>
+          <li>Attach tokens at the API boundary, not throughout random components.</li>
+          <li>Handle 401/403 differently: unauthenticated vs unauthorized.</li>
+          <li>Enforce permissions server-side.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to decode JWT on the client</summary>
+          <div class="details-body">
+            <p>
+              Do not use client-decoded claims as a security boundary. They can help optimize UI display, but backend
+              authorization must decide real access.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Is a JWT encrypted?</b></p>
+            <p>A: Usually no. Standard JWTs are signed, meaning tampering can be detected, but payload contents are readable.</p>
+            <p><b>Q: Why is local storage risky for tokens?</b></p>
+            <p>A: Any successful XSS can read local storage and exfiltrate tokens.</p>
+            <p><b>Q: What is the difference between 401 and 403?</b></p>
+            <p>A: 401 means not authenticated; 403 means authenticated but not allowed.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Design an Auth0 provider wrapper for a Vite app.</li>
+              <li>Add token injection to the API layer without leaking auth concerns into UI components.</li>
+              <li>Define UI behavior for loading, unauthenticated, unauthorized, and expired-session states.</li>
+              <li>Explain the security tradeoffs of memory, local storage, and HttpOnly cookie approaches.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="i18n">
+        <div class="section-kicker">Section 12</div>
+        <h2>Internationalization with i18next</h2>
+        <p>
+          Internationalization is not just replacing strings. It includes namespaces, lazy loading, pluralization,
+          interpolation, formatting, fallbacks, and avoiding layout assumptions that break in longer languages.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>i18n.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> i18next <span class="kw">from</span> <span class="str">"i18next"</span>;
+<span class="kw">import</span> HttpBackend <span class="kw">from</span> <span class="str">"i18next-http-backend"</span>;
+<span class="kw">import</span> { initReactI18next } <span class="kw">from</span> <span class="str">"react-i18next"</span>;
+
+<span class="kw">export const</span> i18n = i18next
+  .use(HttpBackend)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: <span class="str">"en"</span>,
+    supportedLngs: [<span class="str">"en"</span>, <span class="str">"pl"</span>, <span class="str">"de"</span>],
+    ns: [<span class="str">"common"</span>, <span class="str">"orders"</span>, <span class="str">"reports"</span>],
+    defaultNS: <span class="str">"common"</span>,
+    backend: {
+      loadPath: <span class="str">"/locales/{{lng}}/{{ns}}.json"</span>,
+    },
+    interpolation: {
+      escapeValue: <span class="kw">false</span>,
+    },
+  });</code></pre>
+        </div>
+
+        <h3>Lazy Loading Translations</h3>
+        <p>
+          Split translations by namespace and load feature namespaces on demand. This reduces initial bundle size and
+          avoids shipping every language and feature copy to every user.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Concatenating translated strings instead of using interpolation.</li>
+          <li>Ignoring pluralization rules.</li>
+          <li>Hardcoding dates, numbers, currencies, and units.</li>
+          <li>Designing fixed-width UI that breaks with longer translations.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Use namespaces by domain or route.</li>
+          <li>Keep translation keys stable and meaningful.</li>
+          <li>Use Intl APIs for dates, numbers, and currency.</li>
+          <li>Test at least one language with longer strings.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to translate in components</summary>
+          <div class="details-body">
+            <p>
+              Avoid constructing business messages through string fragments in components. Prefer full translation
+              keys with interpolation so translators control grammar and word order.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why use namespaces?</b></p>
+            <p>A: They split translation files by domain and allow lazy loading only the copy needed for a route or feature.</p>
+            <p><b>Q: Why is string concatenation bad?</b></p>
+            <p>A: Grammar and word order differ between languages, so fragments often produce incorrect translations.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Create namespaces for common UI, orders, reports, and auth.</li>
+              <li>Implement language switching with persistence.</li>
+              <li>Replace string concatenation with interpolation and plural rules.</li>
+              <li>Audit one page for layout issues caused by longer translations.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="performance">
+        <div class="section-kicker">Section 13</div>
+        <h2>Performance Optimization</h2>
+        <p>
+          Performance work starts with measurement. In React interviews, show that you understand causes of re-render,
+          network waterfalls, bundle size, expensive computations, layout thrashing, and poor caching.
+        </p>
+
+        <h3>Re-render Causes</h3>
+        <ul>
+          <li>Component state updates.</li>
+          <li>Parent re-renders causing child function execution.</li>
+          <li>Context value identity changes.</li>
+          <li>External store subscriptions changing.</li>
+          <li>Query results changing due to fetch/invalidation.</li>
+        </ul>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>memoization-boundary.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { memo, useMemo } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">const</span> ExpensiveTable = <span class="fn">memo</span>(<span class="kw">function</span> <span class="fn">ExpensiveTable</span>({ rows }: { rows: <span class="type">OrderRow</span>[] }) {
+  <span class="kw">return</span> &lt;DataGrid rows={rows} /&gt;;
+});
+
+<span class="kw">export function</span> <span class="fn">OrdersView</span>({ orders, status }: <span class="type">Props</span>) {
+  <span class="kw">const</span> visibleRows = <span class="fn">useMemo</span>(
+    () =&gt; orders.filter((order) =&gt; order.status === status),
+    [orders, status],
+  );
+
+  <span class="kw">return</span> &lt;ExpensiveTable rows={visibleRows} /&gt;;
+}</code></pre>
+        </div>
+
+        <h3>Memoization</h3>
+        <p>
+          <code>useMemo</code>, <code>useCallback</code>, and <code>React.memo</code> are optimization tools, not
+          correctness tools. They help when referential stability prevents expensive child work or expensive
+          calculations. They add complexity and can be useless if dependencies change every render.
+        </p>
+
+        <h3>Code Splitting</h3>
+        <p>
+          Split by routes and heavy features: D3 reports, R3F scenes, admin panels, and rarely-used import/export
+          workflows. Do not split every small component.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Adding memoization everywhere without profiling.</li>
+          <li>Passing unstable object literals to memoized children.</li>
+          <li>Using one massive context value for frequently changing state.</li>
+          <li>Shipping heavy chart/3D code on the initial dashboard route.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Measure first with React Profiler, browser performance tools, and bundle analysis.</li>
+          <li>Move state down when only a small subtree needs it.</li>
+          <li>Use virtualization for large tables/lists.</li>
+          <li>Code split heavy routes and features.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to memoize</summary>
+          <div class="details-body">
+            <p>
+              Do not memoize cheap calculations, components that always re-render due to changing props, or code where
+              readability suffers more than performance improves. Memoization has maintenance cost.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Does React.memo prevent all re-renders?</b></p>
+            <p>A: No. It shallowly compares props. Context changes, state changes, and changed prop references still trigger work.</p>
+            <p><b>Q: What is a common context performance problem?</b></p>
+            <p>A: A provider passes a new object value frequently, causing all consumers to re-render.</p>
+            <p><b>Q: How do you optimize a slow page?</b></p>
+            <p>A: Measure, identify bottleneck, choose targeted optimization, verify improvement, and avoid speculative complexity.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Profile a dashboard and identify the top three render costs.</li>
+              <li>Split a heavy reports page with lazy loading.</li>
+              <li>Replace one broad context with smaller providers or external-store selectors.</li>
+              <li>Explain why a chosen memoization boundary is worth the complexity.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="testing">
+        <div class="section-kicker">Section 14</div>
+        <h2>Testing with Playwright</h2>
+        <p>
+          E2E tests validate user-critical flows across browser, network, routing, rendering, and integration points.
+          They are more expensive than unit tests, so focus on business-critical paths.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>orders.spec.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">"@playwright/test"</span>;
+
+<span class="fn">test</span>(<span class="str">"dispatcher assigns courier to an order"</span>, <span class="kw">async</span> ({ page }) =&gt; {
+  <span class="kw">await</span> page.goto(<span class="str">"/orders?depot=warsaw-central"</span>);
+
+  <span class="kw">await</span> <span class="fn">expect</span>(page.getByRole(<span class="str">"heading"</span>, { name: <span class="str">"Orders"</span> })).toBeVisible();
+  <span class="kw">await</span> page.getByRole(<span class="str">"row"</span>, { name: /ACME Logistics/ }).getByRole(<span class="str">"button"</span>, { name: <span class="str">"Assign"</span> }).click();
+  <span class="kw">await</span> page.getByRole(<span class="str">"option"</span>, { name: <span class="str">"Marta Kowalska"</span> }).click();
+  <span class="kw">await</span> page.getByRole(<span class="str">"button"</span>, { name: <span class="str">"Confirm assignment"</span> }).click();
+
+  <span class="kw">await</span> <span class="fn">expect</span>(page.getByText(<span class="str">"Courier assigned"</span>)).toBeVisible();
+});</code></pre>
+        </div>
+
+        <h3>What to Test</h3>
+        <p>
+          Test user outcomes: authentication, navigation, core CRUD flows, permission behavior, critical filters,
+          error states, and high-risk integrations. Do not assert implementation details.
+        </p>
+
+        <h3>Test Structure</h3>
+        <p>
+          Use fixtures for auth state, API mocking where appropriate, and clear selectors based on roles and labels.
+          Prefer resilient locators like <code>getByRole</code> over CSS implementation selectors.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Testing CSS classes instead of user-visible behavior.</li>
+          <li>Writing one giant end-to-end test for every possible flow.</li>
+          <li>Using arbitrary timeouts instead of waiting for UI conditions.</li>
+          <li>Sharing mutable state between tests.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Test critical paths, not every implementation branch.</li>
+          <li>Use role-based locators for accessibility and resilience.</li>
+          <li>Keep tests independent and deterministic.</li>
+          <li>Capture traces/screenshots for debugging CI failures.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use E2E tests</summary>
+          <div class="details-body">
+            <p>
+              Avoid E2E tests for pure functions, small formatting helpers, and exhaustive validation rules. Those are
+              faster and clearer as unit tests. E2E tests should cover confidence in integrated behavior.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why prefer getByRole?</b></p>
+            <p>A: It matches how users and assistive technology perceive the UI, and it is less coupled to implementation.</p>
+            <p><b>Q: What makes E2E tests flaky?</b></p>
+            <p>A: Race conditions, arbitrary waits, shared state, uncontrolled external services, and unstable selectors.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Write an E2E test for login, route access, and logout.</li>
+              <li>Write an order assignment flow using role-based locators.</li>
+              <li>Replace arbitrary waits with assertions on UI state.</li>
+              <li>Define which flows belong in E2E versus unit/component tests.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section id="build-tools">
+        <div class="section-kicker">Section 15</div>
+        <h2>Build Tools: Vite, TypeScript, and Environment Configuration</h2>
+        <p>
+          Build tools affect developer experience, production output, environment configuration, and performance.
+          Vite uses native ESM during development and Rollup for production builds.
+        </p>
+
+        <h3>Vite vs Webpack</h3>
+        <table class="matrix">
+          <thead>
+            <tr><th>Area</th><th>Vite</th><th>Webpack</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Development</td><td>Native ESM server, fast startup</td><td>Usually bundles more upfront</td></tr>
+            <tr><td>Production</td><td>Rollup-based build</td><td>Webpack bundling pipeline</td></tr>
+            <tr><td>Config</td><td>Simpler defaults for modern apps</td><td>Very flexible, often more complex</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Bundling vs Transpiling</h3>
+        <p>
+          Transpiling converts syntax, such as TypeScript or modern JavaScript, into browser-compatible JavaScript.
+          Bundling combines modules, optimizes chunks, and rewrites imports for deployment.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>env.d.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">interface</span> <span class="type">ImportMetaEnv</span> {
+  <span class="kw">readonly</span> VITE_API_URL: <span class="type">string</span>;
+  <span class="kw">readonly</span> VITE_AUTH0_DOMAIN: <span class="type">string</span>;
+  <span class="kw">readonly</span> VITE_AUTH0_CLIENT_ID: <span class="type">string</span>;
+}
+
+<span class="kw">interface</span> <span class="type">ImportMeta</span> {
+  <span class="kw">readonly</span> env: <span class="type">ImportMetaEnv</span>;
+}</code></pre>
+        </div>
+
+        <h3>Environment Variables</h3>
+        <p>
+          In Vite, only variables prefixed with <code>VITE_</code> are exposed to client code. Anything exposed to
+          frontend code is public from a security perspective. Never put backend secrets in frontend env variables.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Putting secrets in <code>VITE_</code> variables.</li>
+          <li>Assuming TypeScript checking happens automatically during every Vite build unless configured.</li>
+          <li>Ignoring bundle size from heavy libraries.</li>
+          <li>Using environment variables without runtime deployment validation.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Run type checking in CI with <code>tsc</code> or project references.</li>
+          <li>Validate required env variables during app startup or build.</li>
+          <li>Code split heavy features and inspect production chunks.</li>
+          <li>Keep secrets on the server; frontend env values are public configuration.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to customize build tooling</summary>
+          <div class="details-body">
+            <p>
+              Avoid custom build plugins or clever config until a real constraint requires it. Build tooling complexity
+              can slow onboarding and make CI failures harder to diagnose.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Interview questions and answers</summary>
+          <div class="details-body">
+            <p><b>Q: Why is Vite fast in development?</b></p>
+            <p>A: It serves source modules over native ESM and avoids bundling the entire app before startup.</p>
+            <p><b>Q: Are VITE_ variables secret?</b></p>
+            <p>A: No. They are bundled into client code and visible to users.</p>
+            <p><b>Q: What is the difference between bundling and transpiling?</b></p>
+            <p>A: Transpiling changes syntax; bundling combines modules and optimizes output chunks.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Deep tasks and subtasks</summary>
+          <div class="details-body">
+            <ul class="task-list">
+              <li>Define required Vite env variables for API and Auth0 configuration.</li>
+              <li>Explain which variables are public and why.</li>
+              <li>Inspect a production build and identify heavy chunks.</li>
+              <li>Compare startup and production behavior between Vite and Webpack.</li>
+            </ul>
+          </div>
+        </details>
+
+        <div class="section-footer">
+          <h3>Final Interview Drill</h3>
+          <p>
+            For every feature you discuss, answer in this structure: ownership, data flow, failure states, performance
+            risks, security implications, and testing strategy. Senior interviewers look for reasoning, not memorized
+            API calls.
+          </p>
+        </div>
+      </section>
+
+      <section id="advanced-typescript">
+        <div class="section-kicker">Section 16</div>
+        <h2>Advanced TypeScript</h2>
+        <p>
+          Strong frontend candidates use TypeScript to encode domain constraints, not just to annotate props.
+          Advanced TypeScript is about narrowing unsafe input, preserving inference, modeling impossible states, and
+          making refactors safer without turning the codebase into unreadable type gymnastics.
+        </p>
+
+        <h3>Generics</h3>
+        <p>
+          Generics let functions, components, and helpers preserve type information from the caller. In production,
+          use them when a utility must work across multiple shapes while still returning precise types.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>query-result.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="type">type</span> ApiResult&lt;<span class="type">TData</span>&gt; =
+  | { status: <span class="str">"success"</span>; data: <span class="type">TData</span> }
+  | { status: <span class="str">"error"</span>; message: <span class="type">string</span> };
+
+<span class="kw">function</span> <span class="fn">unwrapResult</span>&lt;<span class="type">TData</span>&gt;(result: <span class="type">ApiResult</span>&lt;<span class="type">TData</span>&gt;): <span class="type">TData</span> {
+  <span class="kw">if</span> (result.status === <span class="str">"error"</span>) {
+    <span class="kw">throw</span> <span class="kw">new</span> <span class="fn">Error</span>(result.message);
+  }
+
+  <span class="kw">return</span> result.data;
+}</code></pre>
+        </div>
+
+        <h3>Discriminated Unions</h3>
+        <p>
+          Discriminated unions are the best way to model UI states because they prevent impossible combinations such
+          as <code>isLoading: true</code> and <code>data</code> being required at the same time.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>ui-state.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="type">type</span> OrdersState =
+  | { type: <span class="str">"loading"</span> }
+  | { type: <span class="str">"error"</span>; message: <span class="type">string</span> }
+  | { type: <span class="str">"empty"</span> }
+  | { type: <span class="str">"ready"</span>; orders: <span class="type">Order</span>[] };
+
+<span class="kw">function</span> <span class="fn">OrdersContent</span>({ state }: { state: <span class="type">OrdersState</span> }) {
+  <span class="kw">switch</span> (state.type) {
+    <span class="kw">case</span> <span class="str">"loading"</span>:
+      <span class="kw">return</span> &lt;Spinner /&gt;;
+    <span class="kw">case</span> <span class="str">"error"</span>:
+      <span class="kw">return</span> &lt;ErrorState message={state.message} /&gt;;
+    <span class="kw">case</span> <span class="str">"empty"</span>:
+      <span class="kw">return</span> &lt;EmptyState /&gt;;
+    <span class="kw">case</span> <span class="str">"ready"</span>:
+      <span class="kw">return</span> &lt;OrderTable orders={state.orders} /&gt;;
+  }
+}</code></pre>
+        </div>
+
+        <h3>Utility Types, Narrowing, unknown vs any</h3>
+        <p>
+          <code>unknown</code> forces validation before use. <code>any</code> disables type safety and should be
+          isolated to migration boundaries. Utility types like <code>Pick</code>, <code>Omit</code>, <code>Partial</code>,
+          and <code>Record</code> are useful when they express domain intent, not when they hide unclear models.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>type-guard-zod.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">const</span> courierSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  active: z.boolean(),
+});
+
+<span class="kw">type</span> Courier = z.infer&lt;<span class="kw">typeof</span> courierSchema&gt;;
+<span class="kw">type</span> CourierUpdate = <span class="fn">Partial</span>&lt;<span class="fn">Pick</span>&lt;<span class="type">Courier</span>, <span class="str">"name"</span> | <span class="str">"active"</span>&gt;&gt;;
+
+<span class="kw">function</span> <span class="fn">parseCourier</span>(value: <span class="type">unknown</span>): <span class="type">Courier</span> {
+  <span class="kw">return</span> courierSchema.parse(value);
+}</code></pre>
+        </div>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Using <code>any</code> to silence real uncertainty instead of validating with Zod or narrowing.</li>
+          <li>Creating clever generic types that nobody can maintain.</li>
+          <li>Representing UI states with many booleans instead of discriminated unions.</li>
+          <li>Duplicating Zod-inferred types manually and letting them drift.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Prefer <code>unknown</code> for untrusted input and narrow deliberately.</li>
+          <li>Use discriminated unions for async and workflow states.</li>
+          <li>Infer types from Zod schemas at runtime boundaries.</li>
+          <li>Keep advanced types readable enough for the whole team.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use advanced TypeScript</summary>
+          <div class="details-body">
+            <p>
+              Do not use complex conditional types or overloaded generics to avoid writing clearer domain models.
+              If the type is harder to understand than the runtime problem, it is likely over-engineered.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section id="api-client">
+        <div class="section-kicker">Section 17</div>
+        <h2>API Client Architecture: Axios, OpenAPI, Zodios, and Validation</h2>
+        <p>
+          API client architecture controls how the frontend talks to the backend, how errors are normalized, where
+          tokens are attached, how generated contracts are consumed, and how runtime validation protects the app from
+          contract drift.
+        </p>
+
+        <h3>Axios Client and Interceptors</h3>
+        <p>
+          Use one configured client per backend boundary. Interceptors are appropriate for request IDs, auth headers,
+          tracing metadata, and normalized error wrapping. Avoid business-specific decisions inside global interceptors.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>axios-client.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> axios, { AxiosError } <span class="kw">from</span> <span class="str">"axios"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">export const</span> api = axios.create({
+  baseURL: <span class="kw">import</span>.meta.env.VITE_API_URL,
+  timeout: <span class="num">15_000</span>,
+});
+
+<span class="kw">const</span> apiErrorSchema = z.object({
+  code: z.string().optional(),
+  message: z.string(),
+  traceId: z.string().optional(),
+});
+
+<span class="kw">export function</span> <span class="fn">normalizeApiError</span>(error: <span class="type">unknown</span>) {
+  <span class="kw">if</span> (axios.isAxiosError(error)) {
+    <span class="kw">const</span> parsed = apiErrorSchema.safeParse(error.response?.data);
+    <span class="kw">return</span> {
+      status: error.response?.status ?? <span class="num">0</span>,
+      message: parsed.success ? parsed.data.message : <span class="str">"Unexpected API error"</span>,
+      traceId: parsed.success ? parsed.data.traceId : <span class="kw">undefined</span>,
+    };
+  }
+
+  <span class="kw">return</span> { status: <span class="num">0</span>, message: <span class="str">"Unknown client error"</span> };
+}</code></pre>
+        </div>
+
+        <h3>OpenAPI-Generated Clients and Zodios</h3>
+        <p>
+          OpenAPI generation gives compile-time request/response types and reduces manual drift. Zodios combines API
+          endpoint definitions with Zod schemas, making runtime validation and typed calls part of the same contract.
+          In projects using <code>openapi-zod-client</code>, generated schemas should be treated as boundary contracts,
+          not leaked into every UI component if the UI needs a different view model.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>zodios-client.ts</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { Zodios } <span class="kw">from</span> <span class="str">"@zodios/core"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">const</span> orderSchema = z.object({
+  id: z.string(),
+  status: z.enum([<span class="str">"queued"</span>, <span class="str">"assigned"</span>, <span class="str">"delivered"</span>]),
+});
+
+<span class="kw">export const</span> zodiosApi = <span class="kw">new</span> <span class="fn">Zodios</span>(<span class="kw">import</span>.meta.env.VITE_API_URL, [
+  {
+    method: <span class="str">"get"</span>,
+    path: <span class="str">"/orders/:orderId"</span>,
+    alias: <span class="str">"getOrder"</span>,
+    response: orderSchema,
+  },
+]);
+
+<span class="kw">const</span> order = <span class="kw">await</span> zodiosApi.getOrder({ params: { orderId: <span class="str">"ord_123"</span> } });</code></pre>
+        </div>
+
+        <h3>Request/Response Typing and Error Normalization</h3>
+        <p>
+          API functions should return validated domain data or throw normalized errors. Components should not parse
+          Axios error shapes. React Query hooks can then map normalized errors into retry, boundary, or inline fallback
+          behavior.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Calling Axios directly from components and duplicating error handling.</li>
+          <li>Trusting generated TypeScript types without validating risky runtime boundaries.</li>
+          <li>Putting token refresh logic inside every query function.</li>
+          <li>Leaking backend DTOs into UI when the UI needs a stable view model.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Centralize transport configuration and cross-cutting headers.</li>
+          <li>Keep generated clients at the API boundary.</li>
+          <li>Normalize errors into a small app-level error shape.</li>
+          <li>Map API DTOs to UI models when the backend shape is unstable or overly broad.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to generate a client</summary>
+          <div class="details-body">
+            <p>
+              For a very small or unstable prototype API, generation can slow iteration. For a real product with many
+              endpoints and teams, generated contracts usually pay for themselves quickly.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section id="react-error-handling">
+        <div class="section-kicker">Section 18</div>
+        <h2>React Error Handling: Error Boundaries, Suspense, and Async Failures</h2>
+        <p>
+          Production-grade React apps need planned failure states. Error handling is not only a toast. It includes
+          render error isolation, async error normalization, query retries, fallback UI, logging, and recovery paths.
+        </p>
+
+        <h3>Error Boundaries</h3>
+        <p>
+          Error boundaries catch render-time errors in their child tree. They do not catch event handler errors,
+          rejected promises by default, server errors outside render, or errors thrown asynchronously after render.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>ErrorBoundary.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { Component, ReactNode } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="type">type</span> Props = { children: <span class="type">ReactNode</span>; onReset?: () =&gt; <span class="type">void</span> };
+<span class="type">type</span> State = { error: <span class="type">Error</span> | <span class="kw">null</span> };
+
+<span class="kw">export class</span> <span class="type">ErrorBoundary</span> <span class="kw">extends</span> <span class="fn">Component</span>&lt;<span class="type">Props</span>, <span class="type">State</span>&gt; {
+  state: <span class="type">State</span> = { error: <span class="kw">null</span> };
+
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>(error: <span class="type">Error</span>): <span class="type">State</span> {
+    <span class="kw">return</span> { error };
+  }
+
+  <span class="fn">componentDidCatch</span>(error: <span class="type">Error</span>, info: <span class="type">React.ErrorInfo</span>) {
+    <span class="fn">reportErrorToMonitoring</span>({ error, componentStack: info.componentStack });
+  }
+
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (this.state.error) {
+      <span class="kw">return</span> (
+        &lt;FeatureCrashFallback
+          onRetry={() =&gt; {
+            this.props.onReset?.();
+            this.setState({ error: <span class="kw">null</span> });
+          }}
+        /&gt;
+      );
+    }
+
+    <span class="kw">return</span> this.props.children;
+  }
+}</code></pre>
+        </div>
+
+        <h3>Suspense and Query Error Boundaries</h3>
+        <p>
+          Suspense coordinates loading fallback for components that suspend. React Query can integrate with Suspense
+          and error boundaries, but the team must define where fallback boundaries live: page, feature panel, or small
+          widget. Coarse boundaries are simpler; fine-grained boundaries preserve more of the UI when one area fails.
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-title"><span>query-boundary.tsx</span><button class="copy-btn">Copy</button></div>
+          <pre><code><span class="kw">import</span> { QueryErrorResetBoundary } <span class="kw">from</span> <span class="str">"@tanstack/react-query"</span>;
+<span class="kw">import</span> { Suspense } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="kw">export function</span> <span class="fn">OrdersBoundary</span>() {
+  <span class="kw">return</span> (
+    &lt;QueryErrorResetBoundary&gt;
+      {({ reset }) =&gt; (
+        &lt;ErrorBoundary onReset={reset}&gt;
+          &lt;Suspense fallback={&lt;OrdersSkeleton /&gt;}&gt;
+            &lt;OrdersPage /&gt;
+          &lt;/Suspense&gt;
+        &lt;/ErrorBoundary&gt;
+      )}
+    &lt;/QueryErrorResetBoundary&gt;
+  );
+}</code></pre>
+        </div>
+
+        <h3>Async Errors</h3>
+        <p>
+          Event handlers and async callbacks need explicit handling. Use mutation error states, try/catch in event
+          flows, normalized API errors, and logging. Do not expect a render error boundary to catch every failure.
+        </p>
+
+        <h3>Common Mistakes</h3>
+        <ul class="mistakes">
+          <li>Assuming error boundaries catch async errors from event handlers.</li>
+          <li>Wrapping the entire app in one boundary and showing a blank crash screen for small widget errors.</li>
+          <li>Retrying non-retryable 400/403 errors.</li>
+          <li>Showing only a toast for critical data-load failures without recovery UI.</li>
+        </ul>
+
+        <h3>Best Practices</h3>
+        <ul class="practices">
+          <li>Place boundaries around route and feature-level failure domains.</li>
+          <li>Normalize API errors and map them to retry, auth, validation, or fatal UI states.</li>
+          <li>Use Suspense intentionally, with fallback boundaries that match UX expectations.</li>
+          <li>Log errors with enough context to debug without leaking sensitive data.</li>
+        </ul>
+
+        <details>
+          <summary>When NOT to use Suspense</summary>
+          <div class="details-body">
+            <p>
+              Avoid Suspense if the team has not agreed on fallback boundaries and data-fetching conventions. Inline
+              loading states may be clearer for forms, mutations, or partial widgets where preserving stale data matters.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section id="interview-simulation">
+        <div class="section-kicker">Section 19</div>
+        <h2>Interview Simulation</h2>
+        <p>
+          This section contains high-probability interview questions with four answer levels: short answer, strong
+          answer, senior-level answer, and common wrong answer. Use it as a rehearsal script. Answer out loud, then
+          compare your answer with the senior version.
+        </p>
+        <div id="simulation-list" class="simulation-grid" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sectionTrainingDefinitions = [
+      { id: "fundamentals", title: "React fundamentals", domain: "React rendering, reconciliation, effects, props, state, and controlled inputs", concepts: ["render phase", "commit phase", "reconciliation", "keys", "props vs state", "controlled inputs", "uncontrolled refs", "effect cleanup", "dependency arrays", "Strict Mode"] },
+      { id: "state-management", title: "state management", domain: "local state, global client state, Zustand, Recoil, and Redux tradeoffs", concepts: ["state ownership", "local state", "global stores", "Zustand selectors", "Recoil atoms", "Recoil selectors", "Redux conventions", "server state separation", "store boundaries", "anti-patterns"] },
+      { id: "server-state", title: "React Query v5 server state", domain: "queries, mutations, cache freshness, invalidation, optimistic updates, and API errors", concepts: ["query keys", "staleTime", "gcTime", "mutations", "optimistic updates", "invalidation", "retry policy", "error normalization", "placeholder data", "prefetching"] },
+      { id: "routing", title: "React Router v7", domain: "nested routes, layouts, URL state, lazy loading, navigation, SPA behavior, and SEO", concepts: ["nested routes", "layout routes", "route params", "search params", "lazy routes", "navigation", "auth guards", "SPA tradeoffs", "SEO", "route-level loading"] },
+      { id: "architecture", title: "frontend architecture", domain: "feature boundaries, shared modules, API layers, hooks, clean architecture, and folder structure", concepts: ["feature folders", "shared UI", "API layer", "domain models", "view models", "custom hooks", "dependency direction", "module boundaries", "clean architecture", "abstraction timing"] },
+      { id: "forms", title: "forms and validation", domain: "Zod schemas, runtime validation, form ownership, validation timing, and error mapping", concepts: ["Zod schemas", "runtime validation", "compile-time types", "form drafts", "field errors", "coercion", "safeParse", "schema inference", "submit flow", "validation UX"] },
+      { id: "d3", title: "D3 data visualization", domain: "scales, SVG rendering, React integration, accessibility, and chart performance", concepts: ["scales", "domains", "ranges", "SVG marks", "data binding", "React ownership", "axes", "outliers", "accessibility", "canvas fallback"] },
+      { id: "three", title: "Three.js and React Three Fiber", domain: "WebGL, scenes, cameras, meshes, R3F abstractions, Drei helpers, and render-loop performance", concepts: ["scene graph", "camera", "mesh", "geometry", "material", "lights", "useFrame", "instancing", "GPU memory", "Drei controls"] },
+      { id: "drag-drop", title: "drag and drop", domain: "dnd-kit, react-dnd, sortable UI, accessible reordering, and persistence", concepts: ["stable draggable IDs", "sensors", "collision detection", "sortable context", "drop targets", "react-dnd backends", "keyboard DnD", "optimistic reorder", "tree drag", "mobile behavior"] },
+      { id: "animation", title: "Framer Motion animation", domain: "motion principles, layout animations, presence, reduced motion, and rendering performance", concepts: ["AnimatePresence", "layout animation", "transform", "opacity", "gesture animation", "reduced motion", "exit animation", "motion variants", "orchestration", "performance budget"] },
+      { id: "authentication", title: "Auth0 and JWT authentication", domain: "identity, authorization, JWT claims, token storage, Auth0 flows, and API security", concepts: ["JWT header", "JWT payload", "signature", "access token", "refresh token", "Auth0 SDK", "silent auth", "token storage", "401 vs 403", "backend authorization"] },
+      { id: "i18n", title: "internationalization", domain: "i18next namespaces, lazy loading, interpolation, pluralization, fallbacks, and formatting", concepts: ["namespaces", "fallbackLng", "lazy translations", "interpolation", "pluralization", "Intl formatting", "language persistence", "missing keys", "layout expansion", "translation testing"] },
+      { id: "performance", title: "React performance", domain: "render causes, memoization, code splitting, virtualization, bundle weight, and measurement", concepts: ["re-render causes", "React.memo", "useMemo", "useCallback", "context churn", "virtualization", "code splitting", "bundle analysis", "profiler", "network waterfalls"] },
+      { id: "testing", title: "Playwright testing", domain: "E2E strategy, resilient locators, fixtures, auth setup, API mocks, traces, and flaky test prevention", concepts: ["getByRole", "fixtures", "auth state", "network mocking", "trace viewer", "test isolation", "determinism", "critical paths", "CI retries", "accessibility selectors"] },
+      { id: "build-tools", title: "Vite build tooling", domain: "Vite dev server, Rollup production build, environment variables, TypeScript checks, and bundle output", concepts: ["native ESM", "Rollup", "transpiling", "bundling", "VITE variables", "type checking", "chunking", "tree shaking", "compression", "build validation"] },
+      { id: "advanced-typescript", title: "advanced TypeScript", domain: "generics, discriminated unions, utility types, narrowing, unknown, type guards, and Zod inference", concepts: ["generics", "discriminated unions", "utility types", "type narrowing", "unknown vs any", "type guards", "Zod inference", "conditional types", "exhaustiveness", "domain modeling"] },
+      { id: "api-client", title: "API client architecture", domain: "Axios, interceptors, OpenAPI generation, Zodios, schemas, request typing, and normalized errors", concepts: ["Axios client", "interceptors", "OpenAPI client", "Zodios", "schema validation", "request typing", "response typing", "error normalization", "DTO mapping", "auth headers"] },
+      { id: "react-error-handling", title: "React error handling", domain: "Error Boundaries, Suspense, async errors, query reset boundaries, and fallback UI", concepts: ["Error Boundary", "componentDidCatch", "Suspense fallback", "async errors", "event handler errors", "QueryErrorResetBoundary", "retry UX", "fallback UI", "monitoring", "recovery action"] },
+      { id: "interview-simulation", title: "interview simulation", domain: "explaining frontend decisions under interview pressure with concise, strong, and senior answers", concepts: ["answer structure", "tradeoffs", "debugging story", "architecture defense", "performance reasoning", "security reasoning", "testing strategy", "library comparison", "failure states", "communication clarity"] },
+    ];
+
+    function answerFor(definition, concept, index) {
+      const patterns = [
+        `In ${definition.title}, ${concept} matters because it changes ownership, lifecycle, or failure behavior. I would explain it through a production delivery dashboard: define who owns the data, what causes updates, how stale or invalid values are handled, and how I would test the behavior.`,
+        `The practical rule is to start from the user flow, then choose the smallest abstraction that keeps ${concept} explicit. If the abstraction hides errors, cache invalidation, rendering cost, or security assumptions, it is probably too broad.`,
+        `I would validate ${concept} by checking edge cases, loading and error states, performance impact, and whether the code remains understandable for another engineer. A strong answer includes both the benefit and the cost.`,
+        `A senior answer connects ${concept} to architecture: boundaries, data flow, observability, and rollback. I would avoid saying "because the library does it" and instead describe the behavior the app needs.`,
+        `In a real codebase, ${concept} should be documented through naming and tests. The implementation should make the safe path easy and make invalid states difficult to represent.`,
+      ];
+      return patterns[index % patterns.length];
+    }
+
+    function renderTrainingPack(definition) {
+      const section = document.getElementById(definition.id);
+      if (!section || section.querySelector(".training-pack")) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "training-pack";
+
+      const questions = definition.concepts.map((concept, index) => ({
+        question: `${index + 1}. How would you explain ${concept} in the context of ${definition.title}?`,
+        answer: answerFor(definition, concept, index),
+      }));
+
+      const exercises = [
+        `Build a small feature that uses ${definition.concepts[0]} and document the state/data flow in three bullets.`,
+        `Refactor one intentionally messy example so ${definition.concepts[1]} is explicit and testable.`,
+        `Add loading, empty, error, and success states for a delivery-dashboard scenario involving ${definition.concepts[2]}.`,
+        `Write a short interview explanation comparing ${definition.concepts[3]} with a realistic alternative.`,
+        `Create a checklist that another developer could use to review ${definition.concepts[4]} in a pull request.`,
+      ];
+
+      const debugging = [
+        `A production page behaves correctly after refresh but breaks after client-side navigation. Debug ${definition.concepts[0]} by checking ownership, lifecycle, cached data, and cleanup.`,
+        `A change fixed one dashboard widget but caused unrelated widgets to re-render or reset. Investigate ${definition.concepts[1]} with profiler output and component boundaries.`,
+        `A user reports inconsistent behavior between fast and slow networks. Trace ${definition.concepts[2]} through loading states, retries, stale values, and error recovery.`,
+      ];
+
+      const tradeoffs = [
+        `Tradeoff 1: Prefer a simple local implementation when ${definition.concepts[3]} only affects one feature; introduce shared abstraction only when duplication reveals a stable pattern.`,
+        `Tradeoff 2: Optimize ${definition.concepts[4]} only after measurement; premature optimization can make the code harder to reason about than the original bottleneck.`,
+        `Tradeoff 3: Choose explicit boundaries for ${definition.concepts[5]} even if it adds a little boilerplate, because debugging hidden coupling is more expensive later.`,
+      ];
+
+      const redFlags = [
+        `"I would use it because it is popular" is weak. Explain the production problem solved by ${definition.concepts[6]}.`,
+        `"I do not need to test this" is a red flag. At minimum, describe the critical behavior and failure mode for ${definition.concepts[7]}.`,
+        `"TypeScript/React/the library guarantees it" is incomplete. Explain what is guaranteed at compile time, runtime, render time, and network time.`,
+      ];
+
+      const miniProject = `Mini project: implement a delivery operations panel that demonstrates ${definition.concepts.slice(0, 4).join(", ")}. Include typed inputs, realistic failure states, an explanation of tradeoffs, and one Playwright-style acceptance scenario.`;
+
+      wrapper.innerHTML = `
+        <h3>Expanded Interview Training Pack</h3>
+        <p>This block turns the section into interview practice. Do not memorize it; practice explaining the reasoning out loud.</p>
+        <details>
+          <summary>10 real interview questions with model answers</summary>
+          <div class="details-body">
+            <div class="qa-list">
+              ${questions.map((item) => `
+                <div class="qa-item">
+                  <b>${item.question}</b>
+                  <p>${item.answer}</p>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </details>
+        <div class="training-columns">
+          <details>
+            <summary>5 practical exercises</summary>
+            <div class="details-body"><ul>${exercises.map((item) => `<li>${item}</li>`).join("")}</ul></div>
+          </details>
+          <details>
+            <summary>3 debugging scenarios</summary>
+            <div class="details-body"><ul>${debugging.map((item) => `<li>${item}</li>`).join("")}</ul></div>
+          </details>
+          <details>
+            <summary>3 architecture tradeoff discussions</summary>
+            <div class="details-body"><ul>${tradeoffs.map((item) => `<li>${item}</li>`).join("")}</ul></div>
+          </details>
+          <details>
+            <summary>3 red flag answers to avoid</summary>
+            <div class="details-body"><ul>${redFlags.map((item) => `<li>${item}</li>`).join("")}</ul></div>
+          </details>
+        </div>
+        <details>
+          <summary>Mini project / implementation task</summary>
+          <div class="details-body"><p>${miniProject}</p></div>
+        </details>
+      `;
+
+      section.appendChild(wrapper);
+    }
+
+    const simulationQuestions = [
+      "Explain React reconciliation and why keys matter.",
+      "What happens during render phase and commit phase?",
+      "When should you use useEffect and when should you avoid it?",
+      "How do you decide between local state, Zustand, Recoil, and React Query?",
+      "Why is server state different from client state?",
+      "Explain staleTime and gcTime in React Query v5.",
+      "How would you implement optimistic updates safely?",
+      "What makes a good React Query key?",
+      "How do nested routes improve dashboard architecture?",
+      "When should state live in the URL?",
+      "How would you structure a scalable React project?",
+      "What belongs in shared code and what should stay feature-local?",
+      "Why use Zod if TypeScript already exists?",
+      "Explain unknown vs any.",
+      "How do discriminated unions improve UI state modeling?",
+      "How do you integrate D3 with React without DOM ownership conflicts?",
+      "When would you choose canvas instead of SVG?",
+      "What are scene, camera, mesh, geometry, and material in Three.js?",
+      "Why should you avoid React state updates inside useFrame?",
+      "Compare dnd-kit and react-dnd.",
+      "How do you make drag and drop accessible?",
+      "What animation properties are usually safest for performance?",
+      "What does AnimatePresence solve?",
+      "Explain JWT structure and whether JWT is encrypted.",
+      "Where should tokens be stored in an SPA?",
+      "How do you handle 401 vs 403?",
+      "How would you design i18next namespaces?",
+      "Why is string concatenation bad in translations?",
+      "What causes React re-renders?",
+      "When is memoization useful and when is it harmful?",
+      "How do you investigate a slow React page?",
+      "What should E2E tests cover?",
+      "Why prefer Playwright getByRole selectors?",
+      "What makes E2E tests flaky?",
+      "Why is Vite fast in development?",
+      "What is bundling vs transpiling?",
+      "Are VITE_ environment variables secret?",
+      "How would you design an Axios API layer?",
+      "Where should interceptors be used and where should they not?",
+      "What is the value of OpenAPI-generated clients?",
+      "How does Zodios connect runtime validation with API typing?",
+      "How do Error Boundaries work?",
+      "What errors do Error Boundaries not catch?",
+      "How do Suspense and fallback UI affect UX?",
+      "How should React Query errors be reset?",
+      "How do you explain architecture tradeoffs in an interview?",
+      "How do you answer when you do not know a library detail?",
+      "How would you onboard into a large frontend codebase?",
+      "How do you decide whether to introduce a new dependency?",
+      "Describe a production-ready feature delivery checklist.",
+    ];
+
+    function renderSimulation() {
+      const container = document.getElementById("simulation-list");
+      if (!container || container.children.length > 0) return;
+
+      container.innerHTML = simulationQuestions.map((question, index) => `
+        <article class="simulation-card">
+          <h3>${index + 1}. ${question}</h3>
+          <div class="answer-levels">
+            <div><strong>Short answer</strong>${question} In short: define the core behavior and one practical consequence.</div>
+            <div><strong>Strong answer</strong>Connect the concept to data flow, render behavior, failure states, and a realistic delivery-dashboard example.</div>
+            <div><strong>Senior-level answer</strong>Explain tradeoffs, alternatives, observability, testing strategy, and how the choice scales with team size and product complexity.</div>
+            <div><strong>Common wrong answer</strong>Giving a library slogan, skipping tradeoffs, or claiming the tool magically solves architecture, runtime, or security problems.</div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    sectionTrainingDefinitions.forEach(renderTrainingPack);
+    renderSimulation();
+
+    const body = document.body;
+    const toggle = document.querySelector(".mobile-toggle");
+    const links = Array.from(document.querySelectorAll(".nav a"));
+    const sections = links
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    toggle.addEventListener("click", () => {
+      body.classList.toggle("nav-open");
+    });
+
+    links.forEach((link) => {
+      link.addEventListener("click", () => {
+        body.classList.remove("nav-open");
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visible) return;
+
+        links.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+        });
+      },
+      { rootMargin: "-20% 0px -65% 0px", threshold: [0.1, 0.25, 0.5] },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    document.querySelectorAll(".copy-btn").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const code = button.closest(".code-wrap").querySelector("pre").innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          const previous = button.textContent;
+          button.textContent = "Copied";
+          setTimeout(() => {
+            button.textContent = previous;
+          }, 1200);
+        } catch {
+          button.textContent = "Select manually";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
