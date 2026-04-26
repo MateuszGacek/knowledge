@@ -89,6 +89,11 @@
       min-height: 100vh;
     }
 
+    .mobile-header,
+    .menu-backdrop {
+      display: none;
+    }
+
     .sidebar {
       position: sticky;
       top: 0;
@@ -509,15 +514,139 @@
     .hidden { display: none !important; }
 
     @media (max-width: 1050px) {
-      .app { grid-template-columns: 1fr; }
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+        padding-top: 72px;
+      }
+
+      .mobile-header {
+        position: fixed;
+        z-index: 30;
+        top: 0;
+        right: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        min-height: 72px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(8, 12, 10, 0.94);
+        backdrop-filter: blur(16px);
+      }
+
+      .menu-toggle {
+        display: inline-grid;
+        place-items: center;
+        width: 46px;
+        min-height: 46px;
+        padding: 0;
+        border-color: rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .menu-toggle span,
+      .menu-toggle::before,
+      .menu-toggle::after {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--ink);
+        transition: transform 160ms ease, opacity 160ms ease;
+      }
+
+      .menu-toggle span {
+        margin: 5px 0;
+      }
+
+      body.menu-open .menu-toggle::before {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      body.menu-open .menu-toggle span {
+        opacity: 0;
+      }
+
+      body.menu-open .menu-toggle::after {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+
+      .mobile-title {
+        min-width: 0;
+      }
+
+      .mobile-title strong,
+      .mobile-title span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .mobile-title strong {
+        color: var(--ink);
+        line-height: 1.1;
+      }
+
+      .mobile-title span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .mobile-return {
+        min-height: 40px;
+        border: 1px solid var(--green);
+        border-radius: 8px;
+        padding: 9px 11px;
+        color: #06110d;
+        background: var(--green);
+        font-size: 0.9rem;
+        font-weight: 750;
+        text-decoration: none;
+        white-space: nowrap;
+      }
 
       .sidebar {
-        position: relative;
-        height: auto;
+        position: fixed;
+        z-index: 40;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(88vw, 360px);
+        height: 100dvh;
+        transform: translateX(-105%);
+        transition: transform 180ms ease;
+        box-shadow: 24px 0 70px rgba(0, 0, 0, 0.45);
+      }
+
+      body.menu-open .sidebar {
+        transform: translateX(0);
+      }
+
+      .menu-backdrop {
+        position: fixed;
+        z-index: 35;
+        inset: 0;
+        display: block;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0);
+        transition: background 180ms ease;
+      }
+
+      body.menu-open .menu-backdrop {
+        pointer-events: auto;
+        background: rgba(0, 0, 0, 0.58);
       }
 
       .question-nav {
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        grid-template-columns: 1fr;
       }
 
       .study-layout,
@@ -530,6 +659,19 @@
     @media (max-width: 640px) {
       .content { padding: 18px 14px 38px; }
       .sidebar { padding: 18px 14px; }
+      .brand h1 { font-size: 1.34rem; }
+      .brand p { font-size: 0.95rem; }
+      .mobile-header {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+      .app {
+        padding-top: 124px;
+      }
+      .mobile-return {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+        text-align: center;
+      }
       .topbar { align-items: stretch; }
       .tabs,
       .tabs button,
@@ -543,7 +685,18 @@
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
+    <header class="mobile-header">
+      <button class="menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Open question menu" aria-controls="mobile-menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+      </button>
+      <div class="mobile-title">
+        <strong>Soft Skills Interview Trainer</strong>
+        <span>Study, rehearse, mark tough questions, reset.</span>
+      </div>
+      <a class="mobile-return" href="./frontend-interview-course.html">Back to technical course</a>
+    </header>
+    <div class="menu-backdrop" id="menu-backdrop" aria-hidden="true"></div>
+    <aside class="sidebar" id="mobile-menu">
       <div class="brand">
         <a href="./frontend-interview-course.html">Back to technical course</a>
         <h1>Soft Skills Interview Trainer</h1>
@@ -991,6 +1144,9 @@
     };
 
     const el = {
+      body: document.body,
+      menuToggle: document.getElementById("mobile-menu-toggle"),
+      menuBackdrop: document.getElementById("menu-backdrop"),
       nav: document.getElementById("question-nav"),
       search: document.getElementById("search"),
       progressText: document.getElementById("progress-text"),
@@ -1046,6 +1202,16 @@
 
     function current() {
       return questions[state.index];
+    }
+
+    function setMenuOpen(open) {
+      el.body.classList.toggle("menu-open", open);
+      el.menuToggle.setAttribute("aria-expanded", String(open));
+      el.menuToggle.setAttribute("aria-label", open ? "Close question menu" : "Open question menu");
+    }
+
+    function closeMenu() {
+      setMenuOpen(false);
     }
 
     function renderAnswer(target, answer) {
@@ -1526,10 +1692,13 @@
     renderAll();
 
     el.search.addEventListener("input", renderNav);
+    el.menuToggle.addEventListener("click", () => setMenuOpen(!el.body.classList.contains("menu-open")));
+    el.menuBackdrop.addEventListener("click", closeMenu);
     el.nav.addEventListener("click", (event) => {
       const button = event.target.closest("[data-question-index]");
       if (!button) return;
       setIndex(Number(button.dataset.questionIndex));
+      closeMenu();
     });
 
     document.querySelectorAll("[data-mode]").forEach((button) => {
@@ -1626,6 +1795,9 @@
     document.getElementById("stop-breath").addEventListener("click", stopBreathing);
     document.getElementById("new-recovery").addEventListener("click", renderRecoveryPrompt);
     document.getElementById("back-to-study").addEventListener("click", () => setMode("study"));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeMenu();
+    });
     document.addEventListener("keydown", handleKeyboard);
   </script>
 </body>
