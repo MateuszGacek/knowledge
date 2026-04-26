@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soft Skills Audio Loop</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f7ed;
+      --muted: #aab8ad;
+      --page: #0d1110;
+      --paper: #171d19;
+      --paper-strong: #20271f;
+      --line: rgba(218, 229, 216, 0.16);
+      --green: #35c9a6;
+      --coral: #ff795f;
+      --yellow: #f4c95d;
+      --blue: #65b9d6;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(244, 201, 93, 0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(53, 201, 166, 0.055) 1px, transparent 1px),
+        radial-gradient(circle at 18% 8%, rgba(255, 121, 95, 0.1), transparent 28rem),
+        radial-gradient(circle at 82% 12%, rgba(101, 185, 214, 0.12), transparent 26rem),
+        var(--page);
+      background-size: 38px 38px, 38px 38px, auto, auto, auto;
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 52px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-pill,
+    button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--ink);
+      background: var(--paper-strong);
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .link-pill:hover,
+    button:hover {
+      transform: translateY(-1px);
+      border-color: var(--green);
+      background: #263029;
+    }
+
+    button.primary {
+      border-color: var(--green);
+      color: #06110d;
+      background: var(--green);
+      font-weight: 800;
+    }
+
+    button.stop {
+      border-color: var(--coral);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+      transform: none;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--yellow);
+      background: rgba(244, 201, 93, 0.1);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 860px;
+      margin-bottom: 0;
+      font-size: clamp(2.35rem, 8vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(23, 29, 25, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .now-playing {
+      min-height: 520px;
+      padding: clamp(20px, 4vw, 36px);
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--ink);
+      background: rgba(53, 201, 166, 0.16);
+      font-size: 0.86rem;
+      font-weight: 750;
+    }
+
+    .progress {
+      color: var(--yellow);
+      font-family: var(--mono);
+      font-size: 0.92rem;
+      font-weight: 850;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      font-size: clamp(1.85rem, 5vw, 3.5rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .answer {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .answer p {
+      margin: 0;
+      color: #d7e1d9;
+      font-size: 1.05rem;
+    }
+
+    .answer p.active-segment,
+    .question-active {
+      color: var(--ink);
+      background: rgba(244, 201, 93, 0.13);
+      outline: 1px solid rgba(244, 201, 93, 0.28);
+    }
+
+    .question-active {
+      border-radius: 8px;
+      padding: 8px;
+      margin: -8px -8px 10px;
+    }
+
+    .answer p.active-segment {
+      border-radius: 8px;
+      padding: 8px;
+      margin: -8px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .button-grid button {
+      width: 100%;
+    }
+
+    .speed-row {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .status {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--green);
+      background: rgba(255, 255, 255, 0.035);
+      font-weight: 750;
+    }
+
+    .warning {
+      color: var(--yellow);
+    }
+
+    .question-list {
+      display: grid;
+      max-height: 490px;
+      overflow: auto;
+      border-top: 1px solid var(--line);
+    }
+
+    .question-list button {
+      width: 100%;
+      min-height: auto;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      padding: 12px 14px;
+      text-align: left;
+      background: transparent;
+    }
+
+    .question-list button.active {
+      color: #06110d;
+      background: var(--yellow);
+    }
+
+    .anchors {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .anchors .chip:nth-child(2) {
+      background: rgba(255, 121, 95, 0.16);
+    }
+
+    .anchors .chip:nth-child(3) {
+      background: rgba(101, 185, 214, 0.16);
+    }
+
+    @media (max-width: 860px) {
+      .player-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .now-playing {
+        min-height: auto;
+      }
+
+      .question-list {
+        max-height: 340px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .shell {
+        width: min(100% - 22px, 1120px);
+        padding-top: 18px;
+      }
+
+      .button-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .link-pill {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topline">
+      <div class="nav-links">
+        <a class="link-pill" href="./soft-skills.html">Back to trainer</a>
+        <a class="link-pill" href="./frontend-interview-course.html">Technical course</a>
+      </div>
+      <span class="chip">No time limit</span>
+    </div>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow">Audio loop</div>
+      <h1 id="page-title">Soft Skills Listen Loop</h1>
+      <p class="lead">Start once, then let the browser read every question and answer in order. It loops back to the beginning automatically.</p>
+    </section>
+
+    <section class="player-grid">
+      <article class="panel now-playing">
+        <div class="meta-row">
+          <span class="chip" id="theme">Theme</span>
+          <span class="progress" id="progress">Question 1 / 1</span>
+        </div>
+        <h2 id="question"></h2>
+        <div class="anchors" id="anchors"></div>
+        <div class="answer" id="answer"></div>
+      </article>
+
+      <aside class="panel">
+        <div class="controls">
+          <div class="button-grid">
+            <button class="primary" type="button" id="start">Start</button>
+            <button type="button" id="pause">Pause</button>
+            <button type="button" id="previous">Previous</button>
+            <button type="button" id="next">Next</button>
+            <button class="stop" type="button" id="stop">Stop</button>
+          </div>
+
+          <label class="speed-row" for="speed">
+            Speech speed <strong id="speed-label">0.95x</strong>
+            <input id="speed" type="range" min="0.65" max="1.35" value="0.95" step="0.05" />
+          </label>
+
+          <div class="status" id="status">Ready. Tap Start to allow browser speech playback.</div>
+        </div>
+
+        <div class="question-list" id="question-list" aria-label="Soft skills question queue"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./soft-skills-data.js"></script>
+  <script>
+    const questions = window.softSkillsQuestions || [];
+    const state = {
+      index: 0,
+      segment: 0,
+      speed: 0.95,
+      playing: false,
+      paused: false,
+      token: 0
+    };
+
+    const el = {
+      theme: document.getElementById("theme"),
+      progress: document.getElementById("progress"),
+      question: document.getElementById("question"),
+      anchors: document.getElementById("anchors"),
+      answer: document.getElementById("answer"),
+      start: document.getElementById("start"),
+      pause: document.getElementById("pause"),
+      previous: document.getElementById("previous"),
+      next: document.getElementById("next"),
+      stop: document.getElementById("stop"),
+      speed: document.getElementById("speed"),
+      speedLabel: document.getElementById("speed-label"),
+      status: document.getElementById("status"),
+      list: document.getElementById("question-list")
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function supportsSpeech() {
+      return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    }
+
+    function current() {
+      return questions[state.index];
+    }
+
+    function queueFor(item) {
+      return [item.q, ...item.a];
+    }
+
+    function renderList() {
+      el.list.innerHTML = questions.map((item, index) => `
+        <button type="button" class="${index === state.index ? "active" : ""}" data-index="${index}">
+          ${index + 1}. ${escapeHtml(item.q)}
+        </button>
+      `).join("");
+    }
+
+    function render() {
+      if (!questions.length) {
+        el.status.textContent = "No questions found. Check soft-skills-data.js.";
+        return;
+      }
+
+      const item = current();
+      el.theme.textContent = item.theme;
+      el.progress.textContent = `Question ${state.index + 1} / ${questions.length}`;
+      el.question.textContent = item.q;
+      el.question.classList.toggle("question-active", state.segment === 0 && state.playing);
+      el.anchors.innerHTML = item.anchors.map((anchor) => `<span class="chip">${escapeHtml(anchor)}</span>`).join("");
+      el.answer.innerHTML = item.a.map((paragraph, index) => `
+        <p class="${state.segment === index + 1 && state.playing ? "active-segment" : ""}">${escapeHtml(paragraph)}</p>
+      `).join("");
+      el.speed.value = state.speed;
+      el.speedLabel.textContent = `${state.speed.toFixed(2)}x`;
+      el.pause.textContent = state.paused ? "Resume" : "Pause";
+      renderList();
+    }
+
+    function setStatus(message, warning = false) {
+      el.status.textContent = message;
+      el.status.classList.toggle("warning", warning);
+    }
+
+    function cancelSpeech() {
+      state.token += 1;
+      if (supportsSpeech()) window.speechSynthesis.cancel();
+    }
+
+    function speakCurrentSegment() {
+      if (!supportsSpeech()) {
+        setStatus("This browser does not support text-to-speech. Try Chrome, Edge, or Safari.", true);
+        return;
+      }
+
+      const item = current();
+      const queue = queueFor(item);
+      const text = queue[state.segment];
+      const token = state.token;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = state.speed;
+      utterance.pitch = 1;
+
+      utterance.onstart = () => {
+        const label = state.segment === 0 ? "question" : `answer part ${state.segment}`;
+        setStatus(`Reading ${label} at ${state.speed.toFixed(2)}x.`);
+        render();
+      };
+
+      utterance.onend = () => {
+        if (token !== state.token || !state.playing || state.paused) return;
+        state.segment += 1;
+        if (state.segment >= queue.length) {
+          state.index = (state.index + 1) % questions.length;
+          state.segment = 0;
+        }
+        render();
+        speakCurrentSegment();
+      };
+
+      utterance.onerror = () => {
+        if (token !== state.token) return;
+        setStatus("Speech was stopped or blocked by the browser.", true);
+        state.playing = false;
+        state.paused = false;
+        render();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function startLoop() {
+      if (!supportsSpeech()) {
+        setStatus("This browser does not support text-to-speech. Try Chrome, Edge, or Safari.", true);
+        return;
+      }
+      cancelSpeech();
+      state.playing = true;
+      state.paused = false;
+      render();
+      speakCurrentSegment();
+    }
+
+    function togglePause() {
+      if (!state.playing || !supportsSpeech()) return;
+      if (state.paused) {
+        state.paused = false;
+        window.speechSynthesis.resume();
+        setStatus("Resumed.");
+      } else {
+        state.paused = true;
+        window.speechSynthesis.pause();
+        setStatus("Paused.");
+      }
+      render();
+    }
+
+    function stopLoop() {
+      cancelSpeech();
+      state.index = 0;
+      state.segment = 0;
+      state.playing = false;
+      state.paused = false;
+      setStatus("Stopped. Reset to question 1.");
+      render();
+    }
+
+    function selectIndex(index, shouldStart = state.playing) {
+      cancelSpeech();
+      state.index = (index + questions.length) % questions.length;
+      state.segment = 0;
+      state.paused = false;
+      render();
+      if (shouldStart) {
+        state.playing = true;
+        speakCurrentSegment();
+      } else {
+        setStatus(`Selected question ${state.index + 1}.`);
+      }
+    }
+
+    function setSpeed(value) {
+      state.speed = Math.min(1.35, Math.max(0.65, Number(value)));
+      render();
+      if (state.playing && !state.paused) {
+        cancelSpeech();
+        speakCurrentSegment();
+      }
+    }
+
+    el.start.addEventListener("click", startLoop);
+    el.pause.addEventListener("click", togglePause);
+    el.stop.addEventListener("click", stopLoop);
+    el.previous.addEventListener("click", () => selectIndex(state.index - 1));
+    el.next.addEventListener("click", () => selectIndex(state.index + 1));
+    el.speed.addEventListener("input", (event) => setSpeed(event.target.value));
+    el.list.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-index]");
+      if (!button) return;
+      selectIndex(Number(button.dataset.index), state.playing);
+    });
+
+    window.addEventListener("beforeunload", cancelSpeech);
+
+    if (!supportsSpeech()) {
+      setStatus("This browser does not support text-to-speech. Try Chrome, Edge, or Safari.", true);
+    }
+
+    render();
+  </script>
+</body>
+</html>
